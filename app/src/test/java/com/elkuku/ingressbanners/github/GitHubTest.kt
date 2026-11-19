@@ -97,6 +97,17 @@ class GitHubTest {
     }
 
     @Test
+    fun repoKnowsItsTemplate() = runTest {
+        val api = GitHubApi(client { req ->
+            if (req.url.encodedPath.endsWith("/ingress-banners")) json("""{"full_name":"a/ingress-banners","html_url":"h",
+                "template_repository":{"full_name":"elkuku/ingress-banners-template"}}""")
+            else json("""{"full_name":"a/other","html_url":"h"}""")
+        }) { "t" }
+        assertEquals(true, api.repo("a", "ingress-banners")!!.fromTemplate)
+        assertEquals(false, api.repo("a", "other")!!.fromTemplate)
+    }
+
+    @Test
     fun missingRepoIsNull() = runTest {
         val api = GitHubApi(client { json("""{"message":"Not Found"}""", HttpStatusCode.NotFound) }) { "t" }
         assertNull(api.repo("agent", "ingress-banners"))

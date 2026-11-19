@@ -20,20 +20,16 @@ class PrefsStore(private val prefs: SharedPreferences) : Store {
 
 class NotSignedInException : Exception("Not signed in to GitHub")
 
-/** The GitHub sign-in (kept in the app's private settings, refreshed when it expires) and the page repo. */
+/** The GitHub sign-in, kept in the app's private settings and refreshed when it expires. */
 class Account(private val store: Store, private val auth: GitHubAuth, private val now: () -> Long = System::currentTimeMillis) {
     private val lock = Mutex()
 
     val signedIn: Boolean get() = store.get(ACCESS) != null
 
-    /** The GitHub login and the repo of the page (in the user's account). */
+    /** The GitHub login. */
     var login: String?
         get() = store.get(LOGIN)
         set(v) = store.put(LOGIN, v)
-
-    var repo: String?
-        get() = store.get(REPO)
-        set(v) = store.put(REPO, v)
 
     fun save(t: Tokens) {
         store.put(ACCESS, t.access)
@@ -60,6 +56,6 @@ class Account(private val store: Store, private val auth: GitHubAuth, private va
         const val REFRESH = "github_refresh"
         const val EXPIRES = "github_expires"
         const val LOGIN = "github_login"
-        const val REPO = "page_repo"
+        const val REPO = "page_repo" // no longer used; cleared on sign-out
     }
 }

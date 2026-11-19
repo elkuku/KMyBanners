@@ -25,7 +25,14 @@ data class User(val login: String)
 data class Repo(
     @SerialName("full_name") val fullName: String,
     @SerialName("html_url") val htmlUrl: String,
-)
+    /** The template it was made from (GitHub keeps this, also after a rename). */
+    @SerialName("template_repository") val template: TemplateRef? = null,
+) {
+    val fromTemplate: Boolean get() = template?.fullName == GitHubApi.TEMPLATE
+}
+
+@Serializable
+data class TemplateRef(@SerialName("full_name") val fullName: String)
 
 @Serializable
 data class Pages(@SerialName("html_url") val htmlUrl: String? = null)

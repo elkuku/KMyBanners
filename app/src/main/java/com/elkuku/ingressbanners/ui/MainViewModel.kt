@@ -80,11 +80,10 @@ class MainViewModel(
             return@work
         }
         val login = account.login ?: api.user().login.also { account.login = it }
-        val name = account.repo ?: REPO
-        // Set up when the repo exists and config.json has the agent name (else "Create my page" finishes it)
-        val repo = api.repo(login, name)?.takeIf { agentName(login, name).isNotBlank() }
-        account.repo = repo?.let { name }
-        val pages = repo?.let { api.pages(login, name) }
+        // Set up when the repo exists, was made from the template and config.json has the agent name
+        // (else "Create my page" finishes it)
+        val repo = api.repo(login, REPO)?.takeIf { it.fromTemplate && agentName(login, REPO).isNotBlank() }
+        val pages = repo?.let { api.pages(login, REPO) }
         _state.update {
             it.copy(loading = false, signedIn = true, login = login, repo = repo?.fullName, pageUrl = pages?.htmlUrl,
                 bannergress = bgAuth.signedIn)
@@ -121,12 +120,16 @@ class MainViewModel(
     fun createPage(agent: String) = work {
         val login = _state.value.login ?: return@work
         // Again after an error: the repo may exist already
-        val repo = api.repo(login, REPO)
+        val existing = api.repo(login, REPO)
+        if (existing != null && !existing.fromTemplate) {
+            throw Exception("You already have a repository called $REPO that isn't a banner page. " +
+                "Rename it on GitHub, then try again.")
+        }
+        val repo = existing
             ?: api.createFromTemplate(login, REPO, "My Ingress mission banners, made with the Ingress Banners app")
         api.enablePages(login, REPO)
         val config = "{\n  \"agent\": ${jsonString(agent.trim())}\n}\n"
         api.commit(login, REPO, listOf(RepoFile("config.json", config.toByteArray())), "Set the agent name")
-        account.repo = REPO
         _state.update { it.copy(repo = repo.fullName, pageUrl = api.pages(login, REPO)?.htmlUrl) }
     }
 
@@ -237,7 +240,7 @@ class MainViewModel(
 
     companion object {
         /** The page repo in the user's account. */
-        const val REPO = "ingress-banners-page"
+        const val REPO = "ingress-banners"
 
         private val prettyJson = Json { prettyPrint = true }
 
