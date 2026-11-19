@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A 3 x 3 grid of mission medals -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#3AD19A" android:strokeColor="#E3A53B" android:strokeWidth="1.2" android:pathData="M28.5,36 a7.5,7.5 0 1,0 15,0 a7.5,7.5 0 1,0 -15,0" />
+    <path android:fillColor="#5AA2FF" android:strokeColor="#E3A53B" android:strokeWidth="1.2" android:pathData="M46.5,36 a7.5,7.5 0 1,0 15,0 a7.5,7.5 0 1,0 -15,0" />
+    <path android:fillColor="#E3A53B" android:strokeColor="#E3A53B" android:strokeWidth="1.2" android:pathData="M64.5,36 a7.5,7.5 0 1,0 15,0 a7.5,7.5 0 1,0 -15,0" />
+    <path android:fillColor="#5AA2FF" android:strokeColor="#E3A53B" android:strokeWidth="1.2" android:pathData="M28.5,54 a7.5,7.5 0 1,0 15,0 a7.5,7.5 0 1,0 -15,0" />
+    <path android:fillColor="#E3A53B" android:strokeColor="#E3A53B" android:strokeWidth="1.2" android:pathData="M46.5,54 a7.5,7.5 0 1,0 15,0 a7.5,7.5 0 1,0 -15,0" />
+    <path android:fillColor="#3AD19A" android:strokeColor="#E3A53B" android:strokeWidth="1.2" android:pathData="M64.5,54 a7.5,7.5 0 1,0 15,0 a7.5,7.5 0 1,0 -15,0" />
+    <path android:fillColor="#E3A53B" android:strokeColor="#E3A53B" android:strokeWidth="1.2" android:pathData="M28.5,72 a7.5,7.5 0 1,0 15,0 a7.5,7.5 0 1,0 -15,0" />
+    <path android:fillColor="#3AD19A" android:strokeColor="#E3A53B" android:strokeWidth="1.2" android:pathData="M46.5,72 a7.5,7.5 0 1,0 15,0 a7.5,7.5 0 1,0 -15,0" />
+    <path android:fillColor="#5AA2FF" android:strokeColor="#E3A53B" android:strokeWidth="1.2" android:pathData="M64.5,72 a7.5,7.5 0 1,0 15,0 a7.5,7.5 0 1,0 -15,0" />
+</vector>
