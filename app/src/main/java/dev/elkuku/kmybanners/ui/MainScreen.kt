@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import dev.elkuku.kmybanners.PageRepo
 import dev.elkuku.kmybanners.R
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -109,12 +110,29 @@ private fun SignIn(s: UiState, vm: MainViewModel) {
 @Composable
 private fun CreatePage(s: UiState, vm: MainViewModel) {
     var agent by remember { mutableStateOf("") }
+    var repo by remember { mutableStateOf(PageRepo.DEFAULT) }
     Text(stringResource(R.string.signed_in_as, s.login.orEmpty()), style = MaterialTheme.typography.titleMedium)
-    Text(stringResource(R.string.create_text, "${s.login}/${MainViewModel.REPO}"))
+    Text(stringResource(R.string.create_text))
     OutlinedTextField(agent, { agent = it }, label = { Text(stringResource(R.string.agent_name)) }, singleLine = true,
         modifier = Modifier.fillMaxWidth())
-    Button(onClick = { vm.createPage(agent) }, enabled = !s.busy && agent.isNotBlank()) { Text(stringResource(R.string.create_page)) }
+    RepoNameField(repo, { repo = it }, s.login.orEmpty())
+    Button(onClick = { vm.createPage(agent, repo) }, enabled = !s.busy && agent.isNotBlank() && PageRepo.valid(repo.trim())) {
+        Text(stringResource(R.string.create_page))
+    }
     if (s.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
+}
+
+/** The page repo's name, with the page address it gives (or what is wrong with it). */
+@Composable
+internal fun RepoNameField(value: String, onChange: (String) -> Unit, login: String) {
+    val name = value.trim()
+    val ok = PageRepo.valid(name)
+    OutlinedTextField(value, onChange, label = { Text(stringResource(R.string.repo_name)) }, singleLine = true,
+        isError = !ok, modifier = Modifier.fillMaxWidth(),
+        supportingText = {
+            Text(if (ok) stringResource(R.string.page_address, PageRepo.pageUrl(login, name))
+            else stringResource(R.string.error_repo_name))
+        })
 }
 
 @Composable
@@ -160,12 +178,14 @@ private fun PageCard(s: UiState, vm: MainViewModel) {
     Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(stringResource(R.string.your_page), style = MaterialTheme.typography.titleLarge)
-            val banners = s.banners.count { it.status == "match" && !it.single }
+            // As the page counts: every banner, also those not on Bannergress; not single missions, not rows to check
+            val banners = s.banners.count { it.status != "review" && !it.single }
             if (s.banners.isNotEmpty()) {
                 Text(
-                    listOf(pluralStringResource(R.plurals.banners_count, banners, number(banners)),
+                    listOfNotNull(pluralStringResource(R.plurals.banners_count, banners, number(banners)),
                         s.banners.sumOf { it.count }.let { pluralStringResource(R.plurals.missions, it, number(it)) },
-                        stringResource(R.string.to_check_count, number(s.toCheck.size))).joinToString(" · "),
+                        s.toCheck.size.takeIf { it > 0 }?.let { stringResource(R.string.to_check_count, number(it)) })
+                        .joinToString(" · "),
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }

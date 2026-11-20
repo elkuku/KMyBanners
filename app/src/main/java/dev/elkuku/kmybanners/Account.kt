@@ -31,6 +31,11 @@ class Account(private val store: Store, private val auth: GitHubAuth, private va
         get() = store.get(LOGIN)
         set(v) = store.put(LOGIN, v)
 
+    /** The page repo's name, once found or made (it can be renamed). */
+    var repo: String?
+        get() = store.get(REPO)
+        set(v) = store.put(REPO, v)
+
     fun save(t: Tokens) {
         store.put(ACCESS, t.access)
         store.put(REFRESH, t.refresh)
@@ -56,6 +61,6 @@ class Account(private val store: Store, private val auth: GitHubAuth, private va
         const val REFRESH = "github_refresh"
         const val EXPIRES = "github_expires"
         const val LOGIN = "github_login"
-        const val REPO = "page_repo" // no longer used; cleared on sign-out
+        const val REPO = "page_repo"
     }
 }

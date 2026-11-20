@@ -11,7 +11,7 @@
     <string name="code_hint">Tippe den Code auf GitHub ein: Einfügen füllt oft nur das erste Feld.</string>
     <string name="waiting_github">Warte auf GitHub…</string>
     <string name="signed_in_as">Angemeldet als %1$s</string>
-    <string name="create_text">Die App legt für deine Seite das Repository %1$s an. Es ist öffentlich: Die Seite zeigt auf einer Karte, wo du Banner gemacht hast.</string>
+    <string name="create_text">Die App legt für deine Seite ein Repository in deinem GitHub-Konto an. Es ist öffentlich: Die Seite zeigt auf einer Karte, wo du Banner gemacht hast.</string>
     <string name="agent_name">Agentenname</string>
     <string name="create_page">Meine Seite anlegen</string>
     <string name="your_page">Deine Seite</string>
@@ -50,7 +50,7 @@
     <string name="review_previous">Vorherige Reihe</string>
     <string name="your_choice">Deine Wahl</string>
     <string name="error_code_expired">Der Anmeldecode ist abgelaufen oder wurde abgelehnt. Versuch es nochmal.</string>
-    <string name="error_repo_taken">Du hast schon ein Repository namens %1$s, das keine Banner-Seite ist. Benenne es auf GitHub um und versuch es dann nochmal.</string>
+    <string name="error_repo_taken">Du hast schon ein Repository namens %1$s, das keine Bannerseite ist. Wähle einen anderen Namen.</string>
     <string name="error_bannergress_refused">Bannergress hat die Anmeldung abgelehnt. Versuch es nochmal.</string>
     <string name="error_github_signed_out">Bitte melde dich wieder bei GitHub an.</string>
     <string name="error_bannergress_signed_out">Bitte melde dich wieder bei Bannergress an.</string>
@@ -125,4 +125,11 @@
     </plurals>
     <string name="open_bannergress">Auf Bannergress öffnen</string>
     <string name="unassigned">Noch nicht zugeordnet</string>
+    <string name="repo_name">Name des Repositorys</string>
+    <string name="page_address">Deine Seite: %1$s</string>
+    <string name="error_repo_name">Der Name darf nur Buchstaben, Ziffern und - _ . enthalten.</string>
+    <string name="page_repo">Das Repository deiner Seite</string>
+    <string name="rename">Umbenennen</string>
+    <string name="rename_title">Repository umbenennen?</string>
+    <string name="rename_text">Deine Seite zieht nach %1$s um. Die alte Adresse funktioniert dann nicht mehr, auch nicht in Links, die du geteilt hast. Die Seite wird unter dem neuen Namen neu erstellt.</string>
 </resources>

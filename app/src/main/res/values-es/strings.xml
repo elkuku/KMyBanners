@@ -11,7 +11,7 @@
     <string name="code_hint">Escribe el código en GitHub: al pegarlo puede que solo se rellene la primera casilla.</string>
     <string name="waiting_github">Esperando a GitHub…</string>
     <string name="signed_in_as">Sesión iniciada como %1$s</string>
-    <string name="create_text">La app crea el repositorio %1$s para tu página. Es público: la página muestra en un mapa dónde hiciste banners.</string>
+    <string name="create_text">La app crea un repositorio para tu página en tu cuenta de GitHub. Es público: la página muestra en un mapa dónde hiciste banners.</string>
     <string name="agent_name">Nombre de agente</string>
     <string name="create_page">Crear mi página</string>
     <string name="your_page">Tu página</string>
@@ -50,7 +50,7 @@
     <string name="review_previous">Fila anterior</string>
     <string name="your_choice">Tu elección</string>
     <string name="error_code_expired">El código de inicio de sesión caducó o fue rechazado. Inténtalo de nuevo.</string>
-    <string name="error_repo_taken">Ya tienes un repositorio llamado %1$s que no es una página de banners. Cámbiale el nombre en GitHub y vuelve a intentarlo.</string>
+    <string name="error_repo_taken">Ya tienes un repositorio llamado %1$s que no es una página de banners. Elige otro nombre.</string>
     <string name="error_bannergress_refused">Bannergress rechazó el inicio de sesión. Inténtalo de nuevo.</string>
     <string name="error_github_signed_out">Vuelve a iniciar sesión en GitHub.</string>
     <string name="error_bannergress_signed_out">Vuelve a iniciar sesión en Bannergress.</string>
@@ -133,4 +133,11 @@
     </plurals>
     <string name="open_bannergress">Abrir en Bannergress</string>
     <string name="unassigned">Aún sin asignar</string>
+    <string name="repo_name">Nombre del repositorio</string>
+    <string name="page_address">Tu página: %1$s</string>
+    <string name="error_repo_name">El nombre solo puede tener letras, dígitos y - _ .</string>
+    <string name="page_repo">El repositorio de tu página</string>
+    <string name="rename">Cambiar el nombre</string>
+    <string name="rename_title">¿Cambiar el nombre del repositorio?</string>
+    <string name="rename_text">Tu página se muda a %1$s. Su dirección anterior deja de funcionar, también en los enlaces que compartiste. La página se vuelve a crear con el nuevo nombre.</string>
 </resources>

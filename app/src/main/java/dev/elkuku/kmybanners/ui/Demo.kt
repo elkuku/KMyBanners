@@ -2,6 +2,7 @@ package dev.elkuku.kmybanners.ui
 
 import android.net.Uri
 import dev.elkuku.kmybanners.BuildConfig
+import dev.elkuku.kmybanners.PageRepo
 import dev.elkuku.kmybanners.Shot
 import dev.elkuku.kmybanners.github.DeviceCode
 
@@ -29,8 +30,8 @@ object Demo {
 val DEMO_STATES = listOf("signin", "code", "create", "empty", "shared", "building")
 
 private fun demoState(name: String): UiState? {
-    val page = UiState(loading = false, signedIn = true, login = LOGIN, repo = "$LOGIN/${MainViewModel.REPO}",
-        pageUrl = "https://$LOGIN.github.io/${MainViewModel.REPO}/")
+    val page = UiState(loading = false, signedIn = true, login = LOGIN, repo = "$LOGIN/${PageRepo.DEFAULT}",
+        pageUrl = "https://$LOGIN.github.io/${PageRepo.DEFAULT}/")
     val doneList = page.copy(bannergress = true, doneUploaded = 150, doneSyncedAt = "2026-11-19T21:30:00Z")
     return when (name) {
         "signin" -> UiState(loading = false)

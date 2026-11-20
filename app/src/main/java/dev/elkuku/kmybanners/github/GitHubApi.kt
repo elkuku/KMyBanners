@@ -25,6 +25,8 @@ data class User(val login: String)
 data class Repo(
     @SerialName("full_name") val fullName: String,
     @SerialName("html_url") val htmlUrl: String,
+    val name: String = fullName.substringAfter('/'),
+    val topics: List<String> = emptyList(),
     /** The template it was made from (GitHub keeps this, also after a rename). */
     @SerialName("template_repository") val template: TemplateRef? = null,
 ) {
@@ -68,6 +70,29 @@ class GitHubApi(private val http: HttpClient, private val token: suspend () -> S
         }
         throw GitHubException(HttpStatusCode.GatewayTimeout, "The new repo has no main branch yet")
     }
+
+    /** The signed-in user's own repos (with their topics; not the template they were made from). */
+    suspend fun ownRepos(): List<Repo> {
+        val all = mutableListOf<Repo>()
+        for (page in 1..10) {
+            val repos: List<Repo> = send(HttpMethod.Get, "/user/repos?type=owner&per_page=100&page=$page").ok().body()
+            all += repos
+            if (repos.size < 100) break
+        }
+        return all
+    }
+
+    /** The repo's topics, replaced by [names]. */
+    suspend fun setTopics(owner: String, name: String, names: List<String>) {
+        send(HttpMethod.Put, "/repos/$owner/$name/topics", Topics(names)).ok()
+    }
+
+    /**
+     * The repo under a new name. GitHub redirects the repo's old address, not its GitHub Pages site: the page is
+     * at the new address once built again. Throws [GitHubException] with 422 when the name is taken.
+     */
+    suspend fun rename(owner: String, name: String, newName: String): Repo =
+        send(HttpMethod.Patch, "/repos/$owner/$name", Rename(newName)).ok().body()
 
     /** GitHub Pages built by Actions; fine when it is on already. */
     suspend fun enablePages(owner: String, name: String) {
@@ -168,6 +193,8 @@ class GitHubApi(private val http: HttpClient, private val token: suspend () -> S
                                                 val type: String = "blob", val sha: String)
     @Serializable internal data class Generate(val owner: String, val name: String, val description: String,
                                                val private: Boolean = false)
+    @Serializable internal data class Topics(val names: List<String>)
+    @Serializable internal data class Rename(val name: String)
     @Serializable internal data class PagesSource(@SerialName("build_type") val buildType: String)
     @Serializable internal data class Blob(val content: String, val encoding: String)
     @Serializable internal data class NewTree(@SerialName("base_tree") val baseTree: String, val tree: List<TreeEntry>)

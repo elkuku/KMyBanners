@@ -5,7 +5,7 @@ Bannergress.
 
 ## What is public
 
-Your page's repository `ingress-banners` is **public**, and so is the page. Anyone can see:
+Your page's repository (`ingress-banners` unless you chose another name) is **public**, and so is the page. Anyone can see:
 
 - your agent name;
 - the screenshots of your mission medals and the picture made from them;
@@ -25,7 +25,7 @@ GitHub's access is for your public repositories. You can take it back any time o
 
 ## Removing your page
 
-Delete the repository on GitHub: open `ingress-banners`, **Settings**, at the bottom **Delete this
+Delete the repository on GitHub: open your page's repository, **Settings**, at the bottom **Delete this
 repository**. The page is gone a few minutes later.
 
 KMyBanners is not affiliated with Niantic Spatial, Ingress or Bannergress.

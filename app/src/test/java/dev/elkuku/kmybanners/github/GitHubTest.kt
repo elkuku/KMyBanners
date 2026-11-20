@@ -124,4 +124,39 @@ class GitHubTest {
         val api = GitHubApi(client { json("""{"message":"Not Found"}""", HttpStatusCode.NotFound) }) { "t" }
         assertNull(api.repo("agent", "ingress-banners"))
     }
+
+    @Test
+    fun ownReposWithTopicsOverSeveralPages() = runTest {
+        val api = GitHubApi(client { req ->
+            val page = req.url.parameters["page"]!!.toInt()
+            val n = if (page == 1) 100 else 3
+            json((1..n).joinToString(",", "[", "]") { k ->
+                """{"full_name":"a/r$page-$k","html_url":"h","topics":${if (page == 2 && k == 2) "[\"kmybanners\"]" else "[]"}}"""
+            })
+        }) { "t" }
+        val repos = api.ownRepos()
+        assertEquals(103, repos.size)
+        assertEquals(listOf("r2-2"), repos.filter { "kmybanners" in it.topics }.map { it.name })
+        assertEquals(2, requests.size)
+        assertEquals(true, requests[0].first.contains("/user/repos?type=owner&per_page=100&page=1"))
+    }
+
+    @Test
+    fun renameAndTopics() = runTest {
+        val api = GitHubApi(client { req ->
+            if (req.method.value == "PATCH") json("""{"full_name":"a/my-banners","html_url":"h"}""")
+            else json("""{"names":["kmybanners"]}""")
+        }) { "t" }
+        val r = api.rename("a", "ingress-banners", "my-banners")
+        assertEquals("my-banners", r.name)
+        assertEquals("PATCH https://api.github.com/repos/a/ingress-banners" to """{"name":"my-banners"}""", requests[0])
+        api.setTopics("a", "my-banners", listOf("kmybanners"))
+        assertEquals("PUT https://api.github.com/repos/a/my-banners/topics" to """{"names":["kmybanners"]}""", requests[1])
+    }
+
+    @Test(expected = GitHubException::class)
+    fun renameToATakenNameFails() = runTest {
+        val api = GitHubApi(client { json("""{"message":"Repository creation failed."}""", HttpStatusCode.UnprocessableEntity) }) { "t" }
+        api.rename("a", "ingress-banners", "taken")
+    }
 }

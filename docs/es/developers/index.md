@@ -10,7 +10,9 @@ KMyBanners son tres repositorios y ningún servidor:
 
 ## La página de un agente {#la-pagina-de-un-agente}
 
-La app crea `<login>/ingress-banners` a partir de la plantilla y activa GitHub Pages (desde workflows).
+La app crea `<login>/<nombre>` a partir de la plantilla (el agente elige el nombre, `ingress-banners` por
+defecto, y puede cambiarlo después en los ajustes), le da el topic `kmybanners`, por el que la app lo vuelve
+a encontrar, y activa GitHub Pages (desde workflows).
 Todo lo que la app hace después es un commit en ese repositorio:
 
 | Archivo | Escrito por | Qué |

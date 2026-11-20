@@ -5,7 +5,8 @@ Screenshots deiner Missionsmedaillen und teilst sie mit der App; sie findet die 
 [Bannergress](https://bannergress.com) und veröffentlicht die Seite.
 
 Es gibt keinen KMyBanners-Server: Die Seite liegt in einem Repository auf **deinem GitHub-Konto** und wird
-mit GitHub Pages veröffentlicht, unter `https://<dein GitHub-Name>.github.io/ingress-banners/`.
+mit GitHub Pages veröffentlicht, unter `https://<dein GitHub-Name>.github.io/<Name des Repositorys>/`
+(`ingress-banners`, wenn du keinen anderen Namen wählst).
 [So sieht eine aus](https://elkuku.github.io/ingress-banners/).
 
 ## Was du brauchst {#was-du-brauchst}
@@ -55,16 +56,21 @@ Dann geh zurück in die App: Sie merkt die Anmeldung von selbst, innerhalb wenig
 15 Minuten; läuft er ab oder tippst du auf GitHub auf **Cancel**, fang neu an.
 
 Die App braucht Zugriff auf deine *öffentlichen* Repositorys, um deine Seite anzulegen und deine
-Screenshots hochzuladen. Sie ändert nur das Repository `ingress-banners`. Die Anmeldung bei GitHub gilt
+Screenshots hochzuladen. Sie ändert nur das Repository deiner Seite. Die Anmeldung bei GitHub gilt
 8 Stunden, und die App erneuert sie von selbst: Du meldest dich nur einmal an.
 
 ## Deine Seite anlegen {#deine-seite-anlegen}
 
 <img class="shot-phone right" src="/screenshots/app/de/start-create.webp" alt="Die Seite anlegen">
 
-Gib deinen Agentennamen ein und tippe auf **Meine Seite anlegen**. Die App legt das öffentliche
-Repository `ingress-banners` auf deinem Konto an und schaltet GitHub Pages ein. Hast du schon ein
-Repository mit diesem Namen, das keine Bannerseite ist, benenne es vorher auf GitHub um.
+Gib deinen Agentennamen ein und, wenn du willst, einen anderen Namen für das Repository: Er ist Teil der
+Adresse deiner Seite, die die App unter dem Feld zeigt. Der Name darf Buchstaben, Ziffern und `-` `_` `.`
+enthalten; vorgegeben ist `ingress-banners`. Tippe auf **Meine Seite anlegen**: Die App legt das
+öffentliche Repository auf deinem Konto an und schaltet GitHub Pages ein. Hast du schon ein Repository mit
+diesem Namen, das keine Bannerseite ist, wähle einen anderen Namen.
+
+Der Name `<dein GitHub-Name>.github.io` macht die Seite zur eigenen Seite deines Kontos, unter
+`https://<dein GitHub-Name>.github.io/`, wenn du die nicht schon nutzt.
 
 <div style="clear: both"></div>
 
@@ -85,6 +91,12 @@ Sind alle drei erledigt, sieht es so aus, mit den Zahlen deiner Seite oben:
 ## Einstellungen {#einstellungen}
 
 **Einstellungen** (oben rechts) hat die Sprache der App (Deutsch, Englisch, Spanisch oder die des
-Handys), hell oder dunkel, dein GitHub-Konto mit **Abmelden** und die Version.
+Handys), hell oder dunkel, dein GitHub-Konto mit **Abmelden**, das Repository deiner Seite und die Version.
+
+**Umbenennen** ändert den Namen des Repositorys, nach einer Rückfrage. Deine Seite zieht dann an die neue
+Adresse um und wird dort neu erstellt. GitHub leitet die alte Adresse einer Seite nicht weiter: Sie
+funktioniert nicht mehr, auch nicht in Links, die du geteilt hast. Die App findet die Seite am Topic
+`kmybanners`, das sie dem Repository gibt, auch auf einem anderen Handy oder nach einer Umbenennung auf
+der Website von GitHub.
 
 <img class="shot-phone" src="/screenshots/app/de/settings.webp" alt="Die Einstellungen">

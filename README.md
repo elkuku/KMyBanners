@@ -6,14 +6,15 @@ Ingress, matched with [Bannergress](https://bannergress.com), with a map of wher
 **Docs:** [elkuku.github.io/KMyBanners](https://elkuku.github.io/KMyBanners/) (English, German, Spanish;
 source in `docs/`, built with the dev APK by the dev-build workflow).
 
-1. **Sign in with GitHub** (device flow): the app creates `<you>/ingress-banners` from
+1. **Sign in with GitHub** (device flow): the app creates `<you>/<name>` (the agent
+   chooses the name, `ingress-banners` by default; it can be renamed in the settings) from
    [KMyBanners-template](https://github.com/elkuku/KMyBanners-template) and turns on GitHub Pages.
 2. **Sign in to Bannergress** and upload your done list (`done.json`).
 3. In Ingress, take screenshots of your mission medals while scrolling, and **share them to the app**:
    it uploads them in one commit to `inbox/`.
 4. The page's workflow ([KMyBanners-tool](https://github.com/elkuku/KMyBanners-tool)) stitches the
    screenshots, matches the medals with the done list and publishes the page at
-   `https://<you>.github.io/ingress-banners/`.
+   `https://<you>.github.io/<name>/`. The app finds the repo again by its topic `kmybanners`.
 
 ## Download
 

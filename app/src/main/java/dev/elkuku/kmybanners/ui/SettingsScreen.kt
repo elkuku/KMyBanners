@@ -13,15 +13,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import dev.elkuku.kmybanners.AppLanguage
 import dev.elkuku.kmybanners.AppTheme
 import dev.elkuku.kmybanners.BuildConfig
+import dev.elkuku.kmybanners.PageRepo
 import dev.elkuku.kmybanners.R
 
 /** The dev build (debug, or the published dev APK): marked DEV. */
@@ -85,6 +87,7 @@ fun SettingsDialog(s: UiState, vm: MainViewModel, theme: AppTheme, onTheme: (App
                         OutlinedButton(onClick = { close(); vm.signOut() }) { Text(stringResource(R.string.sign_out)) }
                     }
                 }
+                s.repo?.let { repo -> RepoSection(repo.substringAfter('/'), s, vm, close) }
                 Section(stringResource(R.string.version)) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text("${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", style = MaterialTheme.typography.bodyLarge)
@@ -95,6 +98,32 @@ fun SettingsDialog(s: UiState, vm: MainViewModel, theme: AppTheme, onTheme: (App
                 }
             }
         }
+    }
+}
+
+/** The page repo's name, and renaming it (after a warning: the page's old address stops working). */
+@Composable
+private fun RepoSection(current: String, s: UiState, vm: MainViewModel, close: () -> Unit) {
+    var name by remember(current) { mutableStateOf(current) }
+    var confirm by remember { mutableStateOf(false) }
+    val login = s.login.orEmpty()
+    Section(stringResource(R.string.page_repo)) {
+        RepoNameField(name, { name = it }, login)
+        OutlinedButton(onClick = { confirm = true },
+            enabled = !s.busy && s.build?.done != false && PageRepo.valid(name.trim()) && name.trim() != current) {
+            Text(stringResource(R.string.rename))
+        }
+    }
+    if (confirm) {
+        AlertDialog(
+            onDismissRequest = { confirm = false },
+            title = { Text(stringResource(R.string.rename_title)) },
+            text = { Text(stringResource(R.string.rename_text, PageRepo.pageUrl(login, name.trim()))) },
+            confirmButton = {
+                TextButton(onClick = { confirm = false; close(); vm.renamePage(name) }) { Text(stringResource(R.string.rename)) }
+            },
+            dismissButton = { TextButton(onClick = { confirm = false }) { Text(stringResource(R.string.cancel)) } },
+        )
     }
 }
 

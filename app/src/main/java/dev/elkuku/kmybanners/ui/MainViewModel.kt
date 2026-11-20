@@ -6,14 +6,15 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.elkuku.kmybanners.Account
-import dev.elkuku.kmybanners.NotSignedInException
 import dev.elkuku.kmybanners.BannerOption
 import dev.elkuku.kmybanners.Choice
-import dev.elkuku.kmybanners.bannerId
-import dev.elkuku.kmybanners.R
 import dev.elkuku.kmybanners.Corrections
+import dev.elkuku.kmybanners.NotSignedInException
 import dev.elkuku.kmybanners.PageBanner
+import dev.elkuku.kmybanners.PageRepo
+import dev.elkuku.kmybanners.R
 import dev.elkuku.kmybanners.Shot
+import dev.elkuku.kmybanners.bannerId
 import dev.elkuku.kmybanners.bannergress.BannergressApi
 import dev.elkuku.kmybanners.bannergress.BannergressAuth
 import dev.elkuku.kmybanners.bannergress.BannergressLogin
@@ -21,9 +22,16 @@ import dev.elkuku.kmybanners.bannergress.BannergressSignedOutException
 import dev.elkuku.kmybanners.github.DeviceCode
 import dev.elkuku.kmybanners.github.GitHubApi
 import dev.elkuku.kmybanners.github.GitHubAuth
+import dev.elkuku.kmybanners.github.GitHubException
+import dev.elkuku.kmybanners.github.Repo
 import dev.elkuku.kmybanners.github.RepoFile
 import dev.elkuku.kmybanners.json
 import dev.elkuku.kmybanners.shotJpeg
+import io.ktor.http.HttpStatusCode
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -39,10 +47,6 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
 
 /** A message for the user: a string resource, or a plural one for [count], and its arguments. */
 data class UiError(
@@ -117,13 +121,14 @@ class MainViewModel(
         val login = account.login ?: api.user().login.also { account.login = it }
         // Set up when the repo exists, was made from the template and config.json has the agent name
         // (else "Create my page" finishes it)
-        val config = readConfig(login)
+        val found = findPage(login)
+        val config = found?.let { readConfig(login, it.name) } ?: JsonObject(emptyMap())
         val agent = config["agent"]?.jsonPrimitive?.content.orEmpty()
-        val repo = api.repo(login, REPO)?.takeIf { it.fromTemplate && agent.isNotBlank() }
-        val pages = repo?.let { api.pages(login, REPO) }
+        val repo = found?.takeIf { agent.isNotBlank() }
+        val pages = repo?.let { api.pages(login, it.name) }
         // The done list on the page: how many banners, uploaded when (for the front page)
         val doneCount = repo?.let {
-            api.file(login, REPO, "done.json")?.decodeToString()
+            api.file(login, it.name, "done.json")?.decodeToString()
                 ?.let { runCatching { json.parseToJsonElement(it).jsonArray.size }.getOrNull() }
         }
         _state.update {
@@ -135,9 +140,33 @@ class MainViewModel(
         checkBuild()
     }
 
+    /**
+     * The page repo: under the name the app knows (GitHub's API follows a rename made on the website), else by
+     * its topic (another phone, a rename), else under the default name (pages made before the name could be
+     * chosen, without the topic). Only a repo made from the template counts.
+     */
+    private suspend fun findPage(login: String): Repo? {
+        account.repo?.let { api.repo(login, it) }?.takeIf { it.fromTemplate }?.let { return remember(login, it) }
+        api.ownRepos().filter { PageRepo.TOPIC in it.topics }
+            .firstNotNullOfOrNull { r -> api.repo(login, r.name)?.takeIf { it.fromTemplate } }
+            ?.let { return remember(login, it) }
+        api.repo(login, PageRepo.DEFAULT)?.takeIf { it.fromTemplate }?.let { return remember(login, it) }
+        return null
+    }
+
+    /** The page repo's name for later, and its topic, so the app finds it again whatever its name. */
+    private suspend fun remember(login: String, repo: Repo): Repo {
+        account.repo = repo.name
+        if (PageRepo.TOPIC !in repo.topics) api.setTopics(login, repo.name, repo.topics + PageRepo.TOPIC)
+        return repo
+    }
+
+    /** The page repo's name (once it is set up). */
+    private val name: String get() = _state.value.repo?.substringAfter('/') ?: account.repo ?: PageRepo.DEFAULT
+
     /** The page repo's config.json (empty when there is none yet). */
-    private suspend fun readConfig(owner: String): JsonObject =
-        api.file(owner, REPO, "config.json")?.decodeToString()
+    private suspend fun readConfig(owner: String, repo: String): JsonObject =
+        api.file(owner, repo, "config.json")?.decodeToString()
             ?.let { runCatching { json.parseToJsonElement(it).jsonObject }.getOrNull() } ?: JsonObject(emptyMap())
 
     fun signIn() {
@@ -164,20 +193,45 @@ class MainViewModel(
         _state.update { it.copy(code = null, busy = false) }
     }
 
-    /** The page repo from the template, with Pages on and the agent name in config.json. */
-    fun createPage(agent: String) = work {
+    /** The page repo [name] from the template, with its topic, Pages on and the agent name in config.json. */
+    fun createPage(agent: String, name: String) = work {
         val login = _state.value.login ?: return@work
-        // Again after an error: the repo may exist already
-        val existing = api.repo(login, REPO)
-        if (existing != null && !existing.fromTemplate) {
-            throw AppException(UiError(R.string.error_repo_taken, listOf(REPO)))
+        val repoName = name.trim()
+        if (!PageRepo.valid(repoName)) throw AppException(UiError(R.string.error_repo_name))
+        // Again after an error: the repo may exist already (not one GitHub only redirects to, after a rename)
+        val existing = api.repo(login, repoName)
+        if (existing != null && (!existing.fromTemplate || !existing.name.equals(repoName, ignoreCase = true))) {
+            throw AppException(UiError(R.string.error_repo_taken, listOf(repoName)))
         }
         val repo = existing
-            ?: api.createFromTemplate(login, REPO, "My Ingress mission banners, made with the KMyBanners app")
-        api.enablePages(login, REPO)
+            ?: api.createFromTemplate(login, repoName, "My Ingress mission banners, made with the KMyBanners app")
+        remember(login, repo)
+        api.enablePages(login, repo.name)
         val config = "{\n  \"agent\": ${jsonString(agent.trim())}\n}\n"
-        api.commit(login, REPO, listOf(RepoFile("config.json", config.toByteArray())), "Set the agent name")
-        _state.update { it.copy(repo = repo.fullName, pageUrl = api.pages(login, REPO)?.htmlUrl) }
+        api.commit(login, repo.name, listOf(RepoFile("config.json", config.toByteArray())), "Set the agent name")
+        _state.update { it.copy(repo = repo.fullName, pageUrl = api.pages(login, repo.name)?.htmlUrl) }
+    }
+
+    /**
+     * The page repo under a new name, then the page built again: GitHub Pages doesn't redirect, the page is at
+     * its new address once built (the old address stops working).
+     */
+    fun renamePage(newName: String) = work {
+        val login = _state.value.login ?: return@work
+        val to = newName.trim()
+        if (!PageRepo.valid(to)) throw AppException(UiError(R.string.error_repo_name))
+        if (to == name) return@work
+        val repo = try {
+            api.rename(login, name, to)
+        } catch (e: GitHubException) {
+            if (e.status == HttpStatusCode.UnprocessableEntity) throw AppException(UiError(R.string.error_repo_taken, listOf(to)))
+            throw e
+        }
+        account.repo = repo.name
+        _state.update { it.copy(repo = repo.fullName, pageUrl = PageRepo.pageUrl(login, repo.name)) }
+        val before = api.dispatch(login, repo.name, WORKFLOW)
+        _state.update { it.copy(build = Build("queued")) }
+        follow(login) { api.latestDispatch(login, repo.name, WORKFLOW)?.takeIf { it.id != before } }
     }
 
     fun shared(shots: List<Shot>) = _state.update { it.copy(shots = shots, build = null, error = null) }
@@ -201,7 +255,7 @@ class MainViewModel(
             _state.update { it.copy(uploaded = null, error = UiError(args = listOf(n), plural = R.plurals.error_shots_unreadable, count = n)) }
             return@work
         }
-        val sha = api.commit(login, REPO, files, "Add ${files.size} screenshots") { n ->
+        val sha = api.commit(login, name, files, "Add ${files.size} screenshots") { n ->
             _state.update { it.copy(uploaded = n) }
         }
         _state.update { it.copy(shots = emptyList(), uploaded = null, build = Build("queued")) }
@@ -211,13 +265,13 @@ class MainViewModel(
     /** A new build of the page (after a failed one, or to pick up a new version of the tool). */
     fun buildAgain() = work {
         val login = _state.value.login ?: return@work
-        val before = api.dispatch(login, REPO, WORKFLOW)
+        val before = api.dispatch(login, name, WORKFLOW)
         _state.update { it.copy(build = Build("queued")) }
-        follow(login) { api.latestDispatch(login, REPO, WORKFLOW)?.takeIf { it.id != before } }
+        follow(login) { api.latestDispatch(login, name, WORKFLOW)?.takeIf { it.id != before } }
     }
 
     /** Polls the workflow run of the commit until it is done (the page is deployed then). */
-    private suspend fun follow(login: String, sha: String) = follow(login) { api.run(login, REPO, sha) }
+    private suspend fun follow(login: String, sha: String) = follow(login) { api.run(login, name, sha) }
 
     /**
      * Polls the run until it is done: every 5 s for 2 minutes, then every 15 s, for up to an hour (the first
@@ -244,7 +298,7 @@ class MainViewModel(
                 _state.update { it.copy(build = Build(run.status, run.conclusion, run.htmlUrl)) }
                 if (run.status == "completed") {
                     if (run.conclusion == "success") {
-                        _state.update { it.copy(pageUrl = api.pages(login, REPO)?.htmlUrl ?: it.pageUrl) }
+                        _state.update { it.copy(pageUrl = api.pages(login, name)?.htmlUrl ?: it.pageUrl) }
                         delay(10_000) // Pages needs a moment to serve the new files
                         loadToCheck()
                     }
@@ -266,11 +320,11 @@ class MainViewModel(
         if (_state.value.repo == null || following || checking?.isActive == true) return
         checking = viewModelScope.launch {
             try {
-                val run = api.latestRun(login, REPO, WORKFLOW) ?: return@launch
+                val run = api.latestRun(login, name, WORKFLOW) ?: return@launch
                 val shown = _state.value.build
                 if (run.status != "completed") {
                     _state.update { it.copy(build = Build(run.status, null, run.htmlUrl)) }
-                    follow(login) { api.runById(login, REPO, run.id) }
+                    follow(login) { api.runById(login, name, run.id) }
                 } else if (shown != null && !shown.done) {
                     // A build the app was waiting for finished while it wasn't looking
                     _state.update { it.copy(build = Build(run.status, run.conclusion, run.htmlUrl)) }
@@ -311,10 +365,10 @@ class MainViewModel(
         }
         val synced = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT)
             .apply { timeZone = TimeZone.getTimeZone("UTC") }.format(Date())
-        val config = api.file(login, REPO, "config.json")?.decodeToString()
+        val config = api.file(login, name, "config.json")?.decodeToString()
             ?.let { runCatching { json.parseToJsonElement(it).jsonObject }.getOrNull() } ?: JsonObject(emptyMap())
         val newConfig = JsonObject(config + ("doneSyncedAt" to JsonPrimitive(synced)))
-        val sha = api.commit(login, REPO, listOf(
+        val sha = api.commit(login, name, listOf(
             RepoFile("done.json", json.encodeToString(done).toByteArray()),
             RepoFile("config.json", (prettyJson.encodeToString(JsonObject.serializer(), newConfig) + "\n").toByteArray()),
         ), "Update the done list (${done.size} banners)")
@@ -372,10 +426,10 @@ class MainViewModel(
         val chosen = _state.value.decisions.values
         if (chosen.isEmpty()) return@work
         val new = chosen.flatMap { (entry, choice) -> choice.corrections(entry) }
-        val old = api.file(login, REPO, "corrections.json")?.decodeToString()
+        val old = api.file(login, name, "corrections.json")?.decodeToString()
             ?.let { runCatching { json.decodeFromString<Corrections>(it) }.getOrNull() } ?: Corrections()
         val file = prettyJson.encodeToString(Corrections.serializer(), old.plus(new)) + "\n"
-        val sha = api.commit(login, REPO, listOf(RepoFile("corrections.json", file.toByteArray())),
+        val sha = api.commit(login, name, listOf(RepoFile("corrections.json", file.toByteArray())),
             "Check ${chosen.size} medal rows")
         _state.update { it.copy(decisions = emptyMap(), reviewing = null, build = Build("queued")) }
         follow(login, sha)
@@ -410,9 +464,6 @@ class MainViewModel(
     }
 
     companion object {
-        /** The page repo in the user's account. */
-        const val REPO = "ingress-banners"
-
         /** The page repo's workflow (from the template). */
         const val WORKFLOW = "banner-page.yml"
 

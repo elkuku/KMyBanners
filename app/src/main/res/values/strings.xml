@@ -13,7 +13,7 @@
     <string name="code_hint">Type the code on GitHub: pasting it may only fill the first box.</string>
     <string name="waiting_github">Waiting for GitHub…</string>
     <string name="signed_in_as">Signed in as %1$s</string>
-    <string name="create_text">The app creates the repository %1$s for your page. It is public: the page shows on a map where you did banners.</string>
+    <string name="create_text">The app creates a repository for your page on your GitHub account. It is public: the page shows on a map where you did banners.</string>
     <string name="agent_name">Agent name</string>
     <string name="create_page">Create my page</string>
     <string name="your_page">Your page</string>
@@ -52,7 +52,7 @@
     <string name="review_previous">Previous row</string>
     <string name="your_choice">Your choice</string>
     <string name="error_code_expired">The sign-in code expired or was declined. Try again.</string>
-    <string name="error_repo_taken">You already have a repository called %1$s that isn\'t a banner page. Rename it on GitHub, then try again.</string>
+    <string name="error_repo_taken">You already have a repository called %1$s that isn\'t a banner page. Choose another name.</string>
     <string name="error_bannergress_refused">Bannergress refused the sign-in. Try again.</string>
     <string name="error_github_signed_out">Please sign in to GitHub again.</string>
     <string name="error_bannergress_signed_out">Please sign in to Bannergress again.</string>
@@ -127,4 +127,11 @@
     </plurals>
     <string name="open_bannergress">Open on Bannergress</string>
     <string name="unassigned">Not assigned yet</string>
+    <string name="repo_name">Repository name</string>
+    <string name="page_address">Your page: %1$s</string>
+    <string name="error_repo_name">The name may only have letters, digits and - _ .</string>
+    <string name="page_repo">Your page\'s repository</string>
+    <string name="rename">Rename</string>
+    <string name="rename_title">Rename the repository?</string>
+    <string name="rename_text">Your page moves to %1$s. Its old address stops working, also in links you shared. The page is built again under the new name.</string>
 </resources>

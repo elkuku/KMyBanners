@@ -44,8 +44,8 @@ def strings(lang: str) -> dict[str, str]:
     return {k: unescape(v).replace("\\'", "'") for k, v in re.findall(r'<string name="([^"]+)"[^>]*>([^<]*)</string>', xml)}
 
 
-def tap(text: str, wait: float = 2) -> None:
-    """Taps the element showing [text]."""
+def tap(text: str, wait: float = 2, required: bool = True) -> bool:
+    """Taps the element showing [text]; without it, stops (or returns False when not [required])."""
     adb('shell', 'uiautomator', 'dump', '/sdcard/ui.xml')
     xml = adb('exec-out', 'cat', '/sdcard/ui.xml').decode()
     for node in re.findall(r'<node [^>]*>', xml):
@@ -53,7 +53,9 @@ def tap(text: str, wait: float = 2) -> None:
             x1, y1, x2, y2 = map(int, re.search(r'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', node).groups())
             adb('shell', 'input', 'tap', str((x1 + x2) // 2), str((y1 + y2) // 2))
             time.sleep(wait)
-            return
+            return True
+    if not required:
+        return False
     raise SystemExit(f'"{text}" is not on the screen')
 
 
@@ -128,9 +130,12 @@ def main(langs: list[str]) -> None:
             # Step 3 is below the first screen
             adb('shell', 'input', 'swipe', '540', '1800', '540', '700', '400')
             time.sleep(1)
-            tap(s['check_them'], 4)
-            shot(out / 'check.webp', bars)
-            tap(s['review_done'])
+            # Only a page with rows to check has the button: else the picture from before stays
+            if tap(s['check_them'], 4, required=False):
+                shot(out / 'check.webp', bars)
+                tap(s['review_done'])
+            else:
+                print(f'{lang}: no rows to check on the page, check.webp kept')
             adb('shell', 'input', 'swipe', '540', '700', '540', '1800', '400')
             tap(s['settings'])
             shot(out / 'settings.webp', bars)

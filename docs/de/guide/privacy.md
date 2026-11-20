@@ -5,7 +5,7 @@ Bannergress.
 
 ## Was öffentlich ist {#was-oeffentlich-ist}
 
-Das Repository deiner Seite, `ingress-banners`, ist **öffentlich**, ebenso die Seite. Jeder kann sehen:
+Das Repository deiner Seite (`ingress-banners`, wenn du keinen anderen Namen gewählt hast) ist **öffentlich**, ebenso die Seite. Jeder kann sehen:
 
 - deinen Agentennamen;
 - die Screenshots deiner Missionsmedaillen und das Bild daraus;
@@ -25,7 +25,7 @@ zurücknehmen: **Settings → Applications → Authorized OAuth Apps → KMyBann
 
 ## Deine Seite entfernen {#deine-seite-entfernen}
 
-Lösche das Repository auf GitHub: Öffne `ingress-banners`, **Settings**, ganz unten **Delete this
+Lösche das Repository auf GitHub: Öffne das Repository deiner Seite, **Settings**, ganz unten **Delete this
 repository**. Ein paar Minuten später ist die Seite weg.
 
 KMyBanners steht in keiner Verbindung zu Niantic Spatial, Ingress oder Bannergress.

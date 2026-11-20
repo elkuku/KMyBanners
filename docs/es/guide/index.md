@@ -5,7 +5,8 @@ de tus medallas de misión en Ingress y las compartes con la app; ella encuentra
 [Bannergress](https://bannergress.com) y publica la página.
 
 No hay un servidor de KMyBanners: la página está en un repositorio de **tu cuenta de GitHub** y se publica
-con GitHub Pages, en `https://<tu nombre de GitHub>.github.io/ingress-banners/`.
+con GitHub Pages, en `https://<tu nombre de GitHub>.github.io/<nombre del repositorio>/` (`ingress-banners`
+si no eliges otro nombre).
 [Aquí hay una](https://elkuku.github.io/ingress-banners/).
 
 ## Lo que necesitas {#lo-que-necesitas}
@@ -54,16 +55,21 @@ Luego vuelve a la app: se da cuenta sola del inicio de sesión, en unos segundos
 minutos; si caduca, o tocas **Cancel** en GitHub, empieza de nuevo.
 
 La app necesita acceso a tus repositorios *públicos* para crear tu página y subir tus capturas. Solo
-modifica el repositorio `ingress-banners`. El inicio de sesión de GitHub dura 8 horas y la app lo renueva
+modifica el repositorio de tu página. El inicio de sesión de GitHub dura 8 horas y la app lo renueva
 sola, así que solo inicias sesión una vez.
 
 ## Crear tu página {#crear-tu-pagina}
 
 <img class="shot-phone right" src="/screenshots/app/es/start-create.webp" alt="Crear la página">
 
-Escribe tu nombre de agente y toca **Crear mi página**. La app crea el repositorio público
-`ingress-banners` en tu cuenta y activa GitHub Pages. Si ya tienes un repositorio con ese nombre que no es
-una página de banners, cámbiale el nombre en GitHub antes.
+Escribe tu nombre de agente y, si quieres, otro nombre para el repositorio: forma parte de la dirección de
+tu página, que la app muestra debajo del campo. El nombre puede tener letras, dígitos y `-` `_` `.`; por
+defecto es `ingress-banners`. Toca **Crear mi página**: la app crea el repositorio público en tu cuenta y
+activa GitHub Pages. Si ya tienes un repositorio con ese nombre que no es una página de banners, elige otro
+nombre.
+
+El nombre `<tu nombre de GitHub>.github.io` hace de la página el sitio propio de tu cuenta, en
+`https://<tu nombre de GitHub>.github.io/`, si no lo usas ya.
 
 <div style="clear: both"></div>
 
@@ -84,6 +90,11 @@ Cuando los tres están hechos, se ve así, con los números de tu página arriba
 ## Ajustes {#ajustes}
 
 **Ajustes** (arriba a la derecha) tiene el idioma de la app (español, inglés, alemán o el del teléfono),
-claro u oscuro, tu cuenta de GitHub con **Cerrar sesión** y la versión.
+claro u oscuro, tu cuenta de GitHub con **Cerrar sesión**, el repositorio de tu página y la versión.
+
+**Cambiar el nombre** cambia el nombre del repositorio, después de preguntar. Tu página se muda entonces a
+la nueva dirección y se vuelve a crear allí. GitHub no redirige la dirección anterior de una página: deja
+de funcionar, también en los enlaces que compartiste. La app encuentra la página por el topic `kmybanners`
+que le da al repositorio, también en otro teléfono o después de cambiar el nombre en la web de GitHub.
 
 <img class="shot-phone" src="/screenshots/app/es/settings.webp" alt="Los ajustes">

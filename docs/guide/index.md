@@ -5,7 +5,8 @@ mission medals in Ingress and share them with the app; it finds the banners on
 [Bannergress](https://bannergress.com) and publishes the page.
 
 There is no KMyBanners server: the page lives in a repository on **your GitHub account** and is published
-with GitHub Pages, at `https://<your GitHub name>.github.io/ingress-banners/`.
+with GitHub Pages, at `https://<your GitHub name>.github.io/<repository name>/` (`ingress-banners` unless you
+choose another name).
 [Here is one](https://elkuku.github.io/ingress-banners/).
 
 ## What you need
@@ -51,16 +52,21 @@ Then go back to the app: it notices the sign-in by itself, within a few seconds.
 15 minutes; if it runs out, or you tap **Cancel** on GitHub, start again.
 
 The app needs access to your *public* repositories to create your page and to upload your screenshots.
-It only touches the repository `ingress-banners`. GitHub's sign-in lasts 8 hours and the app renews it
+It only touches your page's repository. GitHub's sign-in lasts 8 hours and the app renews it
 by itself, so you sign in only once.
 
 ## Create your page
 
 <img class="shot-phone right" src="/screenshots/app/en/start-create.webp" alt="Creating the page">
 
-Type your agent name and tap **Create my page**. The app creates the public repository
-`ingress-banners` on your account and turns on GitHub Pages. If you already have a repository with that
-name that isn't a banner page, rename it on GitHub first.
+Type your agent name and, if you like, another name for the repository: it is part of your page's
+address, which the app shows below the field. The name may have letters, digits and `-` `_` `.`; the
+default is `ingress-banners`. Tap **Create my page**: the app creates the public repository on your
+account and turns on GitHub Pages. If you already have a repository with that name that isn't a banner
+page, choose another name.
+
+The name `<your GitHub name>.github.io` makes the page your account's own site, at
+`https://<your GitHub name>.github.io/`, if you don't use that already.
 
 <div style="clear: both"></div>
 
@@ -81,6 +87,11 @@ When all three are done, it looks like this, with your page's numbers on top:
 ## Settings
 
 **Settings** (top right) has the app's language (English, German, Spanish or the phone's), light or
-dark, your GitHub account with **Sign out**, and the version.
+dark, your GitHub account with **Sign out**, your page's repository, and the version.
+
+**Rename** changes the repository's name, after asking. Your page then moves to the new address and is
+built again there. GitHub doesn't forward the old address of a page: it stops working, also in links you
+shared. The app finds the page by the topic `kmybanners` it gives the repository, also on another phone
+or after a rename on GitHub's website.
 
 <img class="shot-phone" src="/screenshots/app/en/settings.webp" alt="The settings">
