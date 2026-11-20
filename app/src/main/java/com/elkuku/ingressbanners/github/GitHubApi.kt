@@ -105,6 +105,18 @@ class GitHubApi(private val http: HttpClient, private val token: suspend () -> S
         send(HttpMethod.Get, "/repos/$owner/$name/contents/$path").orNull()?.body<Contents>()
             ?.let { Base64.getMimeDecoder().decode(it.content) }
 
+    /** Starts the page workflow on main (as "Run workflow" on GitHub). Returns the newest such run before it. */
+    suspend fun dispatch(owner: String, name: String, workflow: String): Long? {
+        val before = latestDispatch(owner, name, workflow)?.id
+        send(HttpMethod.Post, "/repos/$owner/$name/actions/workflows/$workflow/dispatches", Dispatch("main")).ok()
+        return before
+    }
+
+    /** The newest run of [workflow] started by hand ("Run workflow" or [dispatch]). */
+    suspend fun latestDispatch(owner: String, name: String, workflow: String): WorkflowRun? =
+        send(HttpMethod.Get, "/repos/$owner/$name/actions/workflows/$workflow/runs?event=workflow_dispatch&per_page=1").ok()
+            .body<Runs>().workflowRuns.firstOrNull()
+
     /** The workflow run for a commit (null until GitHub has started it). */
     suspend fun run(owner: String, name: String, sha: String): WorkflowRun? =
         send(HttpMethod.Get, "/repos/$owner/$name/actions/runs?head_sha=$sha").ok()
@@ -139,6 +151,7 @@ class GitHubApi(private val http: HttpClient, private val token: suspend () -> S
     private suspend fun HttpResponse.orNull(): HttpResponse? = if (status == HttpStatusCode.NotFound) null else ok()
 
     @Serializable internal data class Contents(val content: String)
+    @Serializable internal data class Dispatch(val ref: String)
     @Serializable internal data class Runs(@SerialName("workflow_runs") val workflowRuns: List<WorkflowRun> = emptyList())
     @Serializable internal data class Ref(val `object`: Sha)
     @Serializable internal data class Sha(val sha: String)

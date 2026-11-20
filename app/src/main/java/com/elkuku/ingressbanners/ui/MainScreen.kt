@@ -113,6 +113,9 @@ private fun Page(s: UiState, vm: MainViewModel) {
                 Text("Not published yet: share your mission medal screenshots.")
             }
             TextButton(onClick = { uri.openUri("https://github.com/${s.repo}") }) { Text("github.com/${s.repo}") }
+            if (s.build?.done != false && s.pageUrl != null) {
+                TextButton(onClick = vm::buildAgain, enabled = !s.busy) { Text("Build my page again") }
+            }
         }
     }
     when {
@@ -127,11 +130,34 @@ private fun Page(s: UiState, vm: MainViewModel) {
                 OutlinedButton(onClick = vm::clearShots) { Text("Discard") }
             }
         }
-        s.build != null -> BuildCard(s.build, uri::openUri)
+        s.build != null -> BuildCard(s.build, uri::openUri, vm::buildAgain)
         else -> HowTo()
     }
-    if (s.uploaded == null && s.shots.isEmpty()) DoneList(s, vm)
+    if (s.uploaded == null && s.shots.isEmpty()) {
+        if (s.toCheck.isNotEmpty()) ToCheck(s, vm)
+        DoneList(s, vm)
+    }
     s.bannergressLogin?.let { BannergressLoginDialog(it, vm::bannergressCode, vm::bannergressCancel) }
+    ReviewDialog(s, vm)
+}
+
+/** The medal rows the build could not match for sure, and the agent's decisions not saved yet. */
+@Composable
+private fun ToCheck(s: UiState, vm: MainViewModel) {
+    Card(Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("Check your medals", style = MaterialTheme.typography.titleMedium)
+            Text("${s.toCheck.size} medal rows could not be matched for sure. Tell the app which banner they are from.")
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Button(onClick = vm::startReview, enabled = !s.busy) { Text("Check them") }
+                if (s.decisions.isNotEmpty()) {
+                    Button(onClick = vm::saveDecisions, enabled = !s.busy && s.build?.done != false) {
+                        Text("Save ${s.decisions.size}")
+                    }
+                }
+            }
+        }
+    }
 }
 
 /** The Bannergress done list: the page matches the medals with its banner pictures. */
@@ -155,7 +181,7 @@ private fun DoneList(s: UiState, vm: MainViewModel) {
 }
 
 @Composable
-private fun BuildCard(b: Build, open: (String) -> Unit) {
+private fun BuildCard(b: Build, open: (String) -> Unit, again: () -> Unit) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(
@@ -167,6 +193,7 @@ private fun BuildCard(b: Build, open: (String) -> Unit) {
             )
             if (!b.done) LinearProgressIndicator(Modifier.fillMaxWidth())
             b.url?.let { TextButton(onClick = { open(it) }) { Text("Show the build on GitHub") } }
+            if (b.done && b.conclusion != "success") Button(onClick = again) { Text("Try again") }
         }
     }
 }

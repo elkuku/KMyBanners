@@ -5,6 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elkuku.ingressbanners.Account
 import com.elkuku.ingressbanners.NotSignedInException
+import com.elkuku.ingressbanners.Correction
+import com.elkuku.ingressbanners.Corrections
+import com.elkuku.ingressbanners.PageBanner
 import com.elkuku.ingressbanners.Shot
 import com.elkuku.ingressbanners.bannergress.BannergressApi
 import com.elkuku.ingressbanners.bannergress.BannergressAuth
@@ -55,6 +58,9 @@ data class UiState(
     val bannergress: Boolean = false,            // signed in to Bannergress
     val bannergressLogin: BannergressLogin? = null, // the WebView sign-in while it is open
     val doneUploaded: Int? = null,               // banners in the done list just uploaded
+    val toCheck: List<PageBanner> = emptyList(), // medal rows the build could not match for sure
+    val reviewing: Int? = null,                  // the row on the review screen (index into toCheck)
+    val decisions: Map<String, Correction> = emptyMap(), // by fingerprint, not saved yet
 )
 
 class MainViewModel(
@@ -64,6 +70,7 @@ class MainViewModel(
     private val resolver: ContentResolver,
     private val bgAuth: BannergressAuth,
     private val bgApi: BannergressApi,
+    private val fetchToCheck: suspend (pageUrl: String) -> List<PageBanner>?,
 ) : ViewModel() {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state
@@ -88,6 +95,7 @@ class MainViewModel(
             it.copy(loading = false, signedIn = true, login = login, repo = repo?.fullName, pageUrl = pages?.htmlUrl,
                 bannergress = bgAuth.signedIn)
         }
+        loadToCheck()
     }
 
     private suspend fun agentName(owner: String, name: String): String =
@@ -160,16 +168,28 @@ class MainViewModel(
         follow(login, sha)
     }
 
+    /** A new build of the page (after a failed one, or to pick up a new version of the tool). */
+    fun buildAgain() = work {
+        val login = _state.value.login ?: return@work
+        val before = api.dispatch(login, REPO, WORKFLOW)
+        _state.update { it.copy(build = Build("queued")) }
+        follow(login) { api.latestDispatch(login, REPO, WORKFLOW)?.takeIf { it.id != before } }
+    }
+
     /** Polls the workflow run of the commit until it is done (the page is deployed then). */
-    private suspend fun follow(login: String, sha: String) {
+    private suspend fun follow(login: String, sha: String) = follow(login) { api.run(login, REPO, sha) }
+
+    private suspend fun follow(login: String, find: suspend () -> com.elkuku.ingressbanners.github.WorkflowRun?) {
         repeat(120) {
             delay(5000)
-            val run = api.run(login, REPO, sha)
+            val run = find()
             if (run != null) {
                 _state.update { it.copy(build = Build(run.status, run.conclusion, run.htmlUrl)) }
                 if (run.status == "completed") {
                     if (run.conclusion == "success") {
                         _state.update { it.copy(pageUrl = api.pages(login, REPO)?.htmlUrl ?: it.pageUrl) }
+                        delay(10_000) // Pages needs a moment to serve the new files
+                        loadToCheck()
                     }
                     return
                 }
@@ -215,6 +235,45 @@ class MainViewModel(
         follow(login, sha)
     }
 
+    // --- Checking the rows the build could not match for sure ---
+
+    private suspend fun loadToCheck() {
+        val url = _state.value.pageUrl ?: return
+        fetchToCheck(url)?.let { rows -> _state.update { it.copy(toCheck = rows) } }
+    }
+
+    fun startReview() = _state.update { s ->
+        // Start at the first row without a decision
+        val i = s.toCheck.indexOfFirst { it.fp !in s.decisions }.takeIf { it >= 0 } ?: 0
+        s.copy(reviewing = i)
+    }
+
+    fun closeReview() = _state.update { it.copy(reviewing = null) }
+
+    /** The agent's choice for the row on the screen (null: undecided again); then the next row. */
+    fun decide(correction: Correction?) = _state.update { s ->
+        val i = s.reviewing ?: return@update s
+        val fp = s.toCheck[i].fp
+        val decisions = if (correction == null) s.decisions - fp else s.decisions + (fp to correction)
+        s.copy(decisions = decisions, reviewing = if (i + 1 < s.toCheck.size) i + 1 else null)
+    }
+
+    fun previousRow() = _state.update { s -> s.copy(reviewing = s.reviewing?.let { (it - 1).coerceAtLeast(0) }) }
+
+    /** The decisions to corrections.json (added to the earlier ones) in one commit; then follow the build. */
+    fun saveDecisions() = work {
+        val login = _state.value.login ?: return@work
+        val new = _state.value.decisions.values
+        if (new.isEmpty()) return@work
+        val old = api.file(login, REPO, "corrections.json")?.decodeToString()
+            ?.let { runCatching { json.decodeFromString<Corrections>(it) }.getOrNull() } ?: Corrections()
+        val file = prettyJson.encodeToString(Corrections.serializer(), old.plus(new)) + "\n"
+        val sha = api.commit(login, REPO, listOf(RepoFile("corrections.json", file.toByteArray())),
+            "Check ${new.size} medal rows")
+        _state.update { it.copy(decisions = emptyMap(), reviewing = null, build = Build("queued")) }
+        follow(login, sha)
+    }
+
     fun signOut() {
         bgAuth.signOut()
         account.signOut()
@@ -241,6 +300,9 @@ class MainViewModel(
     companion object {
         /** The page repo in the user's account. */
         const val REPO = "ingress-banners"
+
+        /** The page repo's workflow (from the template). */
+        const val WORKFLOW = "banner-page.yml"
 
         private val prettyJson = Json { prettyPrint = true }
 
