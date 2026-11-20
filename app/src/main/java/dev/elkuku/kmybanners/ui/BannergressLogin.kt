@@ -18,8 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import dev.elkuku.kmybanners.R
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import dev.elkuku.kmybanners.bannergress.BannergressAuth
 import dev.elkuku.kmybanners.bannergress.BannergressLogin
 
@@ -33,7 +31,7 @@ import dev.elkuku.kmybanners.bannergress.BannergressLogin
 fun BannergressLoginDialog(login: BannergressLogin, onCode: (String) -> Unit, onCancel: () -> Unit) {
     val currentOnCode by rememberUpdatedState(onCode)
     val currentOnCancel by rememberUpdatedState(onCancel)
-    Dialog(onDismissRequest = onCancel, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+    FullScreenDialog(onDismiss = onCancel) {
         Scaffold(topBar = {
             TopAppBar(title = { Text(stringResource(R.string.sign_in_bannergress)) }, actions = {
                 TextButton(onClick = onCancel) { Text(stringResource(R.string.cancel)) }

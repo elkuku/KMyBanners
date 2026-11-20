@@ -31,8 +31,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import dev.elkuku.kmybanners.AppLanguage
 import dev.elkuku.kmybanners.AppTheme
 import dev.elkuku.kmybanners.BuildConfig
@@ -54,7 +52,7 @@ fun DevBadge() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsDialog(s: UiState, vm: MainViewModel, theme: AppTheme, onTheme: (AppTheme) -> Unit, close: () -> Unit) {
-    Dialog(onDismissRequest = close, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+    FullScreenDialog(onDismiss = close) {
         Scaffold(topBar = {
             TopAppBar(title = { Text(stringResource(R.string.settings)) }, actions = {
                 TextButton(onClick = close) { Text(stringResource(R.string.close)) }

@@ -35,8 +35,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
 import dev.elkuku.kmybanners.BannerOption
 import dev.elkuku.kmybanners.Choice
@@ -74,7 +72,7 @@ fun ReviewDialog(s: UiState, vm: MainViewModel) {
     var link by remember(row.fp) { mutableStateOf("") }
     val editing = s.reviewList.size == 1 && row.status != "review"
 
-    Dialog(onDismissRequest = vm::closeReview, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+    FullScreenDialog(onDismiss = vm::closeReview) {
         Scaffold(topBar = {
             TopAppBar(title = {
                 Text(if (editing) stringResource(R.string.review_change_title)
@@ -175,7 +173,7 @@ private fun OptionCard(o: BannerOption, chosen: Boolean, pick: () -> Unit) {
 @Composable
 fun MyBannersDialog(s: UiState, vm: MainViewModel) {
     if (!s.myBanners) return
-    Dialog(onDismissRequest = vm::closeMyBanners, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+    FullScreenDialog(onDismiss = vm::closeMyBanners) {
         Scaffold(topBar = {
             TopAppBar(title = { Text(stringResource(R.string.my_banners)) }, actions = {
                 TextButton(onClick = vm::closeMyBanners) { Text(stringResource(R.string.close)) }
