@@ -71,6 +71,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // Back in the app: is a build of the page still running, or finished meanwhile?
+    override fun onResume() {
+        super.onResume()
+        vm.checkBuild()
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handle(intent)

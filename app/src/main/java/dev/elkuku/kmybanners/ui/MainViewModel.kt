@@ -122,6 +122,7 @@ class MainViewModel(
                 bannergress = bgAuth.signedIn)
         }
         loadToCheck()
+        checkBuild()
     }
 
     private suspend fun agentName(owner: String, name: String): String =
@@ -208,9 +209,26 @@ class MainViewModel(
     /** Polls the workflow run of the commit until it is done (the page is deployed then). */
     private suspend fun follow(login: String, sha: String) = follow(login) { api.run(login, REPO, sha) }
 
+    /**
+     * Polls the run until it is done: every 5 s for 2 minutes, then every 15 s, for up to an hour (the first
+     * build with a whole list downloads many Bannergress pictures and takes over 10 minutes). If the app goes
+     * away meanwhile, [checkBuild] picks the run up again.
+     */
+    @Volatile private var following = false
+
     private suspend fun follow(login: String, find: suspend () -> dev.elkuku.kmybanners.github.WorkflowRun?) {
-        repeat(120) {
-            delay(5000)
+        following = true
+        try {
+            followRun(login, find)
+        } finally {
+            following = false
+        }
+    }
+
+    private suspend fun followRun(login: String, find: suspend () -> dev.elkuku.kmybanners.github.WorkflowRun?) {
+        val start = System.currentTimeMillis()
+        while (System.currentTimeMillis() - start < 60 * 60_000L) {
+            delay(if (System.currentTimeMillis() - start < 2 * 60_000L) 5_000 else 15_000)
             val run = find()
             if (run != null) {
                 _state.update { it.copy(build = Build(run.status, run.conclusion, run.htmlUrl)) }
@@ -222,6 +240,36 @@ class MainViewModel(
                     }
                     return
                 }
+            }
+        }
+    }
+
+    private var checking: Job? = null
+
+    /**
+     * The newest build of the page, when the app starts or comes back: a running one is followed (also when
+     * the app was closed meanwhile), a finished one shown with its result.
+     */
+    fun checkBuild() {
+        val login = _state.value.login ?: return
+        // following: an upload or "Build again" is following its build already
+        if (_state.value.repo == null || following || checking?.isActive == true) return
+        checking = viewModelScope.launch {
+            try {
+                val run = api.latestRun(login, REPO, WORKFLOW) ?: return@launch
+                val shown = _state.value.build
+                if (run.status != "completed") {
+                    _state.update { it.copy(build = Build(run.status, null, run.htmlUrl)) }
+                    follow(login) { api.runById(login, REPO, run.id) }
+                } else if (shown != null && !shown.done) {
+                    // A build the app was waiting for finished while it wasn't looking
+                    _state.update { it.copy(build = Build(run.status, run.conclusion, run.htmlUrl)) }
+                    if (run.conclusion == "success") loadToCheck()
+                }
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                // offline or GitHub down: the next resume tries again
             }
         }
     }

@@ -117,6 +117,14 @@ class GitHubApi(private val http: HttpClient, private val token: suspend () -> S
         send(HttpMethod.Get, "/repos/$owner/$name/actions/workflows/$workflow/runs?event=workflow_dispatch&per_page=1").ok()
             .body<Runs>().workflowRuns.firstOrNull()
 
+    /** The newest run of [workflow], whatever started it (an upload, "Build again"). */
+    suspend fun latestRun(owner: String, name: String, workflow: String): WorkflowRun? =
+        send(HttpMethod.Get, "/repos/$owner/$name/actions/workflows/$workflow/runs?per_page=1").ok()
+            .body<Runs>().workflowRuns.firstOrNull()
+
+    suspend fun runById(owner: String, name: String, id: Long): WorkflowRun =
+        send(HttpMethod.Get, "/repos/$owner/$name/actions/runs/$id").ok().body()
+
     /** The workflow run for a commit (null until GitHub has started it). */
     suspend fun run(owner: String, name: String, sha: String): WorkflowRun? =
         send(HttpMethod.Get, "/repos/$owner/$name/actions/runs?head_sha=$sha").ok()
