@@ -42,6 +42,15 @@ android {
                 keyPassword = localProperty("release.keyPassword")
             }
         }
+        // The dev key (dev.* in local.properties or from the Pages workflow); without it assembleDev is unsigned
+        if (localProperty("dev.storeFile").isNotBlank()) {
+            create("dev") {
+                storeFile = file(localProperty("dev.storeFile"))
+                storePassword = localProperty("dev.storePassword")
+                keyAlias = localProperty("dev.keyAlias")
+                keyPassword = localProperty("dev.keyPassword")
+            }
+        }
     }
 
     buildTypes {
@@ -50,14 +59,29 @@ android {
             // language and light/dark switches in its settings
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
+            buildConfigField("boolean", "DEV", "true")
         }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.findByName("release")
+            buildConfigField("boolean", "DEV", "false")
+        }
+        // The published dev build: a release build like the debug one ("KMyBanners Dev", .dev, DEV switches),
+        // signed with the dev key; on GitHub Pages as kmybanners-dev.apk, built on every push to main
+        create("dev") {
+            initWith(getByName("release"))
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev" + localProperty("dev.build").let { if (it.isBlank()) "" else "+$it" }
+            buildConfigField("boolean", "DEV", "true")
+            signingConfig = signingConfigs.findByName("dev")
+            matchingFallbacks += "release"
         }
     }
+
+    // The dev build's name ("KMyBanners Dev") is the debug build's
+    sourceSets["dev"].res.directories += "src/debug/res"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

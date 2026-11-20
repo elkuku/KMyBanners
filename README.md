@@ -17,13 +17,21 @@ Ingress, matched with [Bannergress](https://bannergress.com), with a map of wher
 Beta versions: the APK of the [latest release](https://github.com/elkuku/KMyBanners/releases) (Android 8.0 or
 newer). Open it on your phone and allow installing apps from your browser when Android asks.
 
+Dev build: [kmybanners-dev.apk](https://elkuku.github.io/KMyBanners/kmybanners-dev.apk), the latest changes on
+main, built on every push. "KMyBanners Dev" (`dev.elkuku.kmybanners.dev`, marked DEV) installs next to the
+release app.
+
 ## Release
 
 Set `versionName` (and `versionCode`) in `app/build.gradle.kts`, then push a tag `v<versionName>`: the
 release workflow builds the APK, signs it with the release key (repo secrets `RELEASE_KEYSTORE_BASE64`,
 `RELEASE_KEYSTORE_PASSWORD`) and publishes it as a GitHub Release. Locally, `release.*` in `local.properties`
-signs `assembleRelease`; the dev build (debug; `dev.elkuku.kmybanners.dev`, "KMyBanners Dev", marked DEV, with a language and a
-light/dark switch in its settings) installs next to it.
+signs `assembleRelease`.
+
+The dev build (`assembleDev`: a release build as "KMyBanners Dev", `dev.elkuku.kmybanners.dev`, marked DEV) is
+signed with the dev key (repo secrets `DEV_KEYSTORE_BASE64`, `DEV_KEYSTORE_PASSWORD`; locally `dev.*` in
+`local.properties`). The dev-build workflow publishes it on GitHub Pages on every push to main that changes the
+app. The debug build has the same name and package, but a different key: uninstall one to install the other.
 
 ## Build
 
