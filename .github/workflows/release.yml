@@ -39,7 +39,7 @@ jobs:
         env:
           RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
         run: |
-          ./gradlew --console=plain testReleaseUnitTest assembleRelease \
+          ./gradlew --console=plain testDebugUnitTest assembleRelease \
             -Prelease.storeFile="$RUNNER_TEMP/release.jks" -Prelease.storePassword="$RELEASE_KEYSTORE_PASSWORD" \
             -Prelease.keyAlias=kmybanners -Prelease.keyPassword="$RELEASE_KEYSTORE_PASSWORD"
           "$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)/apksigner" verify \
