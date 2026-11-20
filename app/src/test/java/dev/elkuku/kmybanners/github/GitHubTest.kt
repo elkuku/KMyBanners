@@ -1,6 +1,6 @@
-package com.elkuku.ingressbanners.github
+package dev.elkuku.kmybanners.github
 
-import com.elkuku.ingressbanners.httpClient
+import dev.elkuku.kmybanners.httpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockRequestHandleScope
 import io.ktor.client.engine.mock.respond
@@ -100,7 +100,7 @@ class GitHubTest {
     fun repoKnowsItsTemplate() = runTest {
         val api = GitHubApi(client { req ->
             if (req.url.encodedPath.endsWith("/ingress-banners")) json("""{"full_name":"a/ingress-banners","html_url":"h",
-                "template_repository":{"full_name":"elkuku/ingress-banners-template"}}""")
+                "template_repository":{"full_name":"elkuku/KMyBanners-template"}}""")
             else json("""{"full_name":"a/other","html_url":"h"}""")
         }) { "t" }
         assertEquals(true, api.repo("a", "ingress-banners")!!.fromTemplate)

@@ -1,7 +1,7 @@
-package com.elkuku.ingressbanners.bannergress
+package dev.elkuku.kmybanners.bannergress
 
-import com.elkuku.ingressbanners.Store
-import com.elkuku.ingressbanners.httpClient
+import dev.elkuku.kmybanners.Store
+import dev.elkuku.kmybanners.httpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders

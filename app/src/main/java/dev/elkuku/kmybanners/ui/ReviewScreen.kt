@@ -1,4 +1,4 @@
-package com.elkuku.ingressbanners.ui
+package dev.elkuku.kmybanners.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -29,12 +29,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import dev.elkuku.kmybanners.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
-import com.elkuku.ingressbanners.BannerOption
-import com.elkuku.ingressbanners.Correction
+import dev.elkuku.kmybanners.BannerOption
+import dev.elkuku.kmybanners.Correction
 
 /**
  * One row to check at a time: the row's medals and the closest banners of the done list. The agent picks the
@@ -51,35 +54,35 @@ fun ReviewDialog(s: UiState, vm: MainViewModel) {
 
     Dialog(onDismissRequest = vm::closeReview, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Scaffold(topBar = {
-            TopAppBar(title = { Text("Medal row ${i + 1} of ${s.toCheck.size}") }, actions = {
-                TextButton(onClick = vm::closeReview) { Text("Done") }
+            TopAppBar(title = { Text(stringResource(R.string.review_title, i + 1, s.toCheck.size)) }, actions = {
+                TextButton(onClick = vm::closeReview) { Text(stringResource(R.string.review_done)) }
             })
         }) { pad ->
             Column(
                 Modifier.padding(pad).fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                Text("These medals in your list:")
-                AsyncImage(model = s.pageUrl!!.trimEnd('/') + "/" + row.img, contentDescription = "The medal row",
+                Text(stringResource(R.string.review_these))
+                AsyncImage(model = s.pageUrl!!.trimEnd('/') + "/" + row.img, contentDescription = stringResource(R.string.review_medals),
                     modifier = Modifier.fillMaxWidth(), contentScale = ContentScale.FillWidth)
-                Text("Which banner are they from?", style = MaterialTheme.typography.titleMedium)
-                if (row.options.isEmpty()) Text("No banner of your done list looks like them.")
+                Text(stringResource(R.string.review_which), style = MaterialTheme.typography.titleMedium)
+                if (row.options.isEmpty()) Text(stringResource(R.string.review_none))
                 row.options.forEach { o ->
                     OptionCard(o, chosen = decided?.id == o.id) { vm.decide(Correction(row.fp, o.id)) }
                 }
                 if (!notOnBannergress) {
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        OutlinedButton(onClick = { notOnBannergress = true }) { Text("Not on Bannergress") }
-                        OutlinedButton(onClick = { vm.decide(null) }) { Text("Skip") }
+                        OutlinedButton(onClick = { notOnBannergress = true }) { Text(stringResource(R.string.not_on_bannergress)) }
+                        OutlinedButton(onClick = { vm.decide(null) }) { Text(stringResource(R.string.skip)) }
                     }
                 } else {
-                    OutlinedTextField(name, { name = it }, label = { Text("Name (as in Ingress, optional)") },
+                    OutlinedTextField(name, { name = it }, label = { Text(stringResource(R.string.review_name)) },
                         singleLine = true, modifier = Modifier.fillMaxWidth())
                     Button(onClick = { vm.decide(Correction(row.fp, null, name.trim().ifEmpty { "Not on Bannergress" })) }) {
-                        Text("Save as not on Bannergress")
+                        Text(stringResource(R.string.review_save_none))
                     }
                 }
-                if (i > 0) TextButton(onClick = vm::previousRow) { Text("Previous row") }
+                if (i > 0) TextButton(onClick = vm::previousRow) { Text(stringResource(R.string.review_previous)) }
             }
         }
     }
@@ -97,8 +100,8 @@ private fun OptionCard(o: BannerOption, chosen: Boolean, pick: () -> Unit) {
                 contentScale = ContentScale.FillWidth)
             Column(Modifier.weight(1f)) {
                 Text(o.title, style = MaterialTheme.typography.titleSmall)
-                o.missions?.let { Text("$it missions", style = MaterialTheme.typography.bodySmall) }
-                if (chosen) Text("Your choice", color = MaterialTheme.colorScheme.primary,
+                o.missions?.let { Text(pluralStringResource(R.plurals.missions, it, it), style = MaterialTheme.typography.bodySmall) }
+                if (chosen) Text(stringResource(R.string.your_choice), color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.bodySmall)
             }
         }

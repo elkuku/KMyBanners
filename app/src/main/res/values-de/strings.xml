@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sign_out">Abmelden</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="ok">OK</string>
+    <string name="intro_title">Deine Ingress-Missionsbanner auf einer eigenen Webseite.</string>
+    <string name="intro_text">Die App legt die Seite in einem Repository in deinem GitHub-Konto ab und veröffentlicht sie mit GitHub Pages. Melde dich mit GitHub an, um zu beginnen.</string>
+    <string name="sign_in_github">Mit GitHub anmelden</string>
+    <string name="enter_code">Gib diesen Code auf GitHub ein und erlaube der App den Zugriff:</string>
+    <string name="copy_code">Code kopieren und GitHub öffnen</string>
+    <string name="waiting_github">Warte auf GitHub…</string>
+    <string name="signed_in_as">Angemeldet als %1$s</string>
+    <string name="create_text">Die App legt für deine Seite das Repository %1$s an. Es ist öffentlich: Die Seite zeigt auf einer Karte, wo du Banner gemacht hast.</string>
+    <string name="agent_name">Agentenname</string>
+    <string name="create_page">Meine Seite anlegen</string>
+    <string name="your_page">Deine Seite</string>
+    <string name="building">Wird erstellt…</string>
+    <string name="not_published">Noch nicht veröffentlicht: Teile deine Screenshots der Missionsmedaillen.</string>
+    <string name="build_again">Seite neu erstellen</string>
+    <string name="uploading">Lade Screenshot %1$d von %2$d hoch…</string>
+    <string name="shots_range">von %1$s bis %2$s</string>
+    <string name="upload_build">Hochladen und Seite erstellen</string>
+    <string name="discard">Verwerfen</string>
+    <string name="check_title">Prüfe deine Medaillen</string>
+    <string name="check_them">Prüfen</string>
+    <string name="done_title">Deine Bannergress-Erledigt-Liste</string>
+    <string name="done_text">Die Seite findet deine Banner, indem sie deine Medaillen mit den Bildern der Banner auf deiner Bannergress-Erledigt-Liste vergleicht. Lade sie wieder hoch, nachdem du neue Banner als erledigt markiert hast.</string>
+    <string name="sign_in_bannergress">Bei Bannergress anmelden</string>
+    <string name="upload_done">Erledigt-Liste hochladen</string>
+    <string name="build_running">Deine Seite wird erstellt (%1$s)…</string>
+    <string name="build_queued">in der Warteschlange</string>
+    <string name="build_in_progress">läuft</string>
+    <string name="build_ok">Deine Seite ist aktuell.</string>
+    <string name="build_failed">Das Erstellen ist fehlgeschlagen (%1$s).</string>
+    <string name="show_build">Auf GitHub ansehen</string>
+    <string name="try_again">Nochmal versuchen</string>
+    <string name="howto_title">Füge deine Missionsmedaillen hinzu</string>
+    <string name="howto_1">1. Öffne in Ingress dein Agentenprofil, scrolle zu den Missionsmedaillen und tippe auf den Pfeil daneben.</string>
+    <string name="howto_2">2. Mach einen Screenshot, scrolle etwa eine halbe Bildschirmhöhe weiter, warte, bis die Bilder geladen sind, und mach den nächsten – bis ans Ende der Liste.</string>
+    <string name="howto_3">3. Wähle die Screenshots in deiner Galerie aus und teile sie mit KMyBanners.</string>
+    <string name="review_title">Medaillenreihe %1$d von %2$d</string>
+    <string name="review_done">Fertig</string>
+    <string name="review_these">Diese Medaillen in deiner Liste:</string>
+    <string name="review_medals">Die Medaillenreihe</string>
+    <string name="review_which">Zu welchem Banner gehören sie?</string>
+    <string name="review_none">Kein Banner deiner Erledigt-Liste sieht ihnen ähnlich.</string>
+    <string name="not_on_bannergress">Nicht auf Bannergress</string>
+    <string name="skip">Überspringen</string>
+    <string name="review_name">Name (wie in Ingress, optional)</string>
+    <string name="review_save_none">Als „nicht auf Bannergress“ speichern</string>
+    <string name="review_previous">Vorherige Reihe</string>
+    <string name="your_choice">Deine Wahl</string>
+    <string name="error_code_expired">Der Anmeldecode ist abgelaufen oder wurde abgelehnt. Versuch es nochmal.</string>
+    <string name="error_repo_taken">Du hast schon ein Repository namens %1$s, das keine Banner-Seite ist. Benenne es auf GitHub um und versuch es dann nochmal.</string>
+    <string name="error_bannergress_refused">Bannergress hat die Anmeldung abgelehnt. Versuch es nochmal.</string>
+    <string name="error_github_signed_out">Bitte melde dich wieder bei GitHub an.</string>
+    <string name="error_bannergress_signed_out">Bitte melde dich wieder bei Bannergress an.</string>
+    <string name="error_generic">Etwas ist schiefgegangen: %1$s</string>
+    <plurals name="shots_shared">
+        <item quantity="one">%d Screenshot</item>
+        <item quantity="other">%d Screenshots</item>
+    </plurals>
+    <plurals name="check_text">
+        <item quantity="one">%d Medaillenreihe konnte nicht sicher zugeordnet werden. Sag der App, zu welchem Banner sie gehört.</item>
+        <item quantity="other">%d Medaillenreihen konnten nicht sicher zugeordnet werden. Sag der App, zu welchem Banner sie gehören.</item>
+    </plurals>
+    <plurals name="save_decisions">
+        <item quantity="one">%d speichern</item>
+        <item quantity="other">%d speichern</item>
+    </plurals>
+    <plurals name="done_uploaded">
+        <item quantity="one">%d Banner hochgeladen.</item>
+        <item quantity="other">%d Banner hochgeladen.</item>
+    </plurals>
+    <plurals name="missions">
+        <item quantity="one">%d Mission</item>
+        <item quantity="other">%d Missionen</item>
+    </plurals>
+    <plurals name="error_shots_unreadable">
+        <item quantity="one">%d Screenshot konnte nicht gelesen werden.</item>
+        <item quantity="other">%d Screenshots konnten nicht gelesen werden.</item>
+    </plurals>
+</resources>

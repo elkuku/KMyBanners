@@ -1,4 +1,4 @@
-package com.elkuku.ingressbanners
+package dev.elkuku.kmybanners
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,12 +14,12 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.elkuku.ingressbanners.bannergress.BannergressApi
-import com.elkuku.ingressbanners.bannergress.BannergressAuth
-import com.elkuku.ingressbanners.github.GitHubApi
-import com.elkuku.ingressbanners.github.GitHubAuth
-import com.elkuku.ingressbanners.ui.MainScreen
-import com.elkuku.ingressbanners.ui.MainViewModel
+import dev.elkuku.kmybanners.bannergress.BannergressApi
+import dev.elkuku.kmybanners.bannergress.BannergressAuth
+import dev.elkuku.kmybanners.github.GitHubApi
+import dev.elkuku.kmybanners.github.GitHubAuth
+import dev.elkuku.kmybanners.ui.MainScreen
+import dev.elkuku.kmybanners.ui.MainViewModel
 
 class MainActivity : ComponentActivity() {
     private val vm: MainViewModel by viewModels {

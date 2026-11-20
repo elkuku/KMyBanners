@@ -1,4 +1,4 @@
-package com.elkuku.ingressbanners
+package dev.elkuku.kmybanners
 
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond

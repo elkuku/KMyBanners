@@ -1,4 +1,4 @@
-package com.elkuku.ingressbanners.ui
+package dev.elkuku.kmybanners.ui
 
 import android.annotation.SuppressLint
 import android.webkit.WebResourceRequest
@@ -15,11 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import dev.elkuku.kmybanners.R
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.elkuku.ingressbanners.bannergress.BannergressAuth
-import com.elkuku.ingressbanners.bannergress.BannergressLogin
+import dev.elkuku.kmybanners.bannergress.BannergressAuth
+import dev.elkuku.kmybanners.bannergress.BannergressLogin
 
 /**
  * The Bannergress sign-in in a WebView (as AgentTools and kBannerGuider): the sign-in only redirects to
@@ -33,8 +35,8 @@ fun BannergressLoginDialog(login: BannergressLogin, onCode: (String) -> Unit, on
     val currentOnCancel by rememberUpdatedState(onCancel)
     Dialog(onDismissRequest = onCancel, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Scaffold(topBar = {
-            TopAppBar(title = { Text("Sign in to Bannergress") }, actions = {
-                TextButton(onClick = onCancel) { Text("Cancel") }
+            TopAppBar(title = { Text(stringResource(R.string.sign_in_bannergress)) }, actions = {
+                TextButton(onClick = onCancel) { Text(stringResource(R.string.cancel)) }
             })
         }) { pad ->
             AndroidView(

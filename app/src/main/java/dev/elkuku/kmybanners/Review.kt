@@ -1,4 +1,4 @@
-package com.elkuku.ingressbanners
+package dev.elkuku.kmybanners
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

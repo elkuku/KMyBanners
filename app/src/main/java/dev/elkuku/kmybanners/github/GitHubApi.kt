@@ -1,4 +1,4 @@
-package com.elkuku.ingressbanners.github
+package dev.elkuku.kmybanners.github
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -167,6 +167,6 @@ class GitHubApi(private val http: HttpClient, private val token: suspend () -> S
 
     companion object {
         const val API = "https://api.github.com"
-        const val TEMPLATE = "elkuku/ingress-banners-template"
+        const val TEMPLATE = "elkuku/KMyBanners-template"
     }
 }

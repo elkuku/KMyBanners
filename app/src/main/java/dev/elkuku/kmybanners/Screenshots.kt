@@ -1,4 +1,4 @@
-package com.elkuku.ingressbanners
+package dev.elkuku.kmybanners
 
 import android.content.ContentResolver
 import android.content.Intent

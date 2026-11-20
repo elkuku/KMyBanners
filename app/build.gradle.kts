@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.elkuku.ingressbanners"
+    namespace = "dev.elkuku.kmybanners"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.elkuku.ingressbanners"
+        applicationId = "dev.elkuku.kmybanners"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -38,6 +38,11 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+
+    // English, German, Spanish for Android 13+'s per-app language setting (res/resources.properties: English is the default)
+    androidResources {
+        generateLocaleConfig = true
     }
 
     testOptions {

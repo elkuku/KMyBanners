@@ -1,4 +1,4 @@
-package com.elkuku.ingressbanners
+package dev.elkuku.kmybanners
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
@@ -20,5 +20,5 @@ fun httpClient(engine: HttpClientEngine = OkHttp.create()): HttpClient = HttpCli
         requestTimeoutMillis = 120_000
         connectTimeoutMillis = 20_000
     }
-    defaultRequest { header("User-Agent", "IngressBanners/${BuildConfig.VERSION_NAME} (Android)") }
+    defaultRequest { header("User-Agent", "KMyBanners/${BuildConfig.VERSION_NAME} (Android)") }
 }

@@ -1,9 +1,9 @@
-package com.elkuku.ingressbanners
+package dev.elkuku.kmybanners
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.elkuku.ingressbanners.github.GitHubAuth
-import com.elkuku.ingressbanners.github.Tokens
+import dev.elkuku.kmybanners.github.GitHubAuth
+import dev.elkuku.kmybanners.github.Tokens
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 

@@ -1,24 +1,27 @@
-package com.elkuku.ingressbanners.ui
+package dev.elkuku.kmybanners.ui
 
 import android.content.ContentResolver
+import androidx.annotation.PluralsRes
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.elkuku.ingressbanners.Account
-import com.elkuku.ingressbanners.NotSignedInException
-import com.elkuku.ingressbanners.Correction
-import com.elkuku.ingressbanners.Corrections
-import com.elkuku.ingressbanners.PageBanner
-import com.elkuku.ingressbanners.Shot
-import com.elkuku.ingressbanners.bannergress.BannergressApi
-import com.elkuku.ingressbanners.bannergress.BannergressAuth
-import com.elkuku.ingressbanners.bannergress.BannergressLogin
-import com.elkuku.ingressbanners.bannergress.BannergressSignedOutException
-import com.elkuku.ingressbanners.github.DeviceCode
-import com.elkuku.ingressbanners.github.GitHubApi
-import com.elkuku.ingressbanners.github.GitHubAuth
-import com.elkuku.ingressbanners.github.RepoFile
-import com.elkuku.ingressbanners.json
-import com.elkuku.ingressbanners.shotJpeg
+import dev.elkuku.kmybanners.Account
+import dev.elkuku.kmybanners.NotSignedInException
+import dev.elkuku.kmybanners.Correction
+import dev.elkuku.kmybanners.R
+import dev.elkuku.kmybanners.Corrections
+import dev.elkuku.kmybanners.PageBanner
+import dev.elkuku.kmybanners.Shot
+import dev.elkuku.kmybanners.bannergress.BannergressApi
+import dev.elkuku.kmybanners.bannergress.BannergressAuth
+import dev.elkuku.kmybanners.bannergress.BannergressLogin
+import dev.elkuku.kmybanners.bannergress.BannergressSignedOutException
+import dev.elkuku.kmybanners.github.DeviceCode
+import dev.elkuku.kmybanners.github.GitHubApi
+import dev.elkuku.kmybanners.github.GitHubAuth
+import dev.elkuku.kmybanners.github.RepoFile
+import dev.elkuku.kmybanners.json
+import dev.elkuku.kmybanners.shotJpeg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -38,6 +41,17 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
+/** A message for the user: a string resource, or a plural one for [count], and its arguments. */
+data class UiError(
+    @StringRes val res: Int = 0,
+    val args: List<Any> = emptyList(),
+    @PluralsRes val plural: Int = 0,
+    val count: Int = 0,
+)
+
+/** Ends a step with a message for the user. */
+class AppException(val error: UiError) : Exception()
+
 /** A build of the page on GitHub Actions after an upload. */
 data class Build(val status: String, val conclusion: String? = null, val url: String? = null) {
     val done get() = status == "completed"
@@ -54,7 +68,7 @@ data class UiState(
     val uploaded: Int? = null,             // upload progress
     val build: Build? = null,
     val busy: Boolean = false,
-    val error: String? = null,
+    val error: UiError? = null,
     val bannergress: Boolean = false,            // signed in to Bannergress
     val bannergressLogin: BannergressLogin? = null, // the WebView sign-in while it is open
     val doneUploaded: Int? = null,               // banners in the done list just uploaded
@@ -111,7 +125,7 @@ class MainViewModel(
             val tokens = auth.await(code)
             _state.update { it.copy(code = null) }
             if (tokens == null) {
-                _state.update { it.copy(error = "The sign-in code expired or was declined. Try again.") }
+                _state.update { it.copy(error = UiError(R.string.error_code_expired)) }
                 return@work
             }
             account.save(tokens)
@@ -130,11 +144,10 @@ class MainViewModel(
         // Again after an error: the repo may exist already
         val existing = api.repo(login, REPO)
         if (existing != null && !existing.fromTemplate) {
-            throw Exception("You already have a repository called $REPO that isn't a banner page. " +
-                "Rename it on GitHub, then try again.")
+            throw AppException(UiError(R.string.error_repo_taken, listOf(REPO)))
         }
         val repo = existing
-            ?: api.createFromTemplate(login, REPO, "My Ingress mission banners, made with the Ingress Banners app")
+            ?: api.createFromTemplate(login, REPO, "My Ingress mission banners, made with the KMyBanners app")
         api.enablePages(login, REPO)
         val config = "{\n  \"agent\": ${jsonString(agent.trim())}\n}\n"
         api.commit(login, REPO, listOf(RepoFile("config.json", config.toByteArray())), "Set the agent name")
@@ -158,7 +171,8 @@ class MainViewModel(
             }
         }
         if (files.size < shots.size) {
-            _state.update { it.copy(uploaded = null, error = "${shots.size - files.size} screenshots could not be read.") }
+            val n = shots.size - files.size
+            _state.update { it.copy(uploaded = null, error = UiError(args = listOf(n), plural = R.plurals.error_shots_unreadable, count = n)) }
             return@work
         }
         val sha = api.commit(login, REPO, files, "Add ${files.size} screenshots") { n ->
@@ -179,7 +193,7 @@ class MainViewModel(
     /** Polls the workflow run of the commit until it is done (the page is deployed then). */
     private suspend fun follow(login: String, sha: String) = follow(login) { api.run(login, REPO, sha) }
 
-    private suspend fun follow(login: String, find: suspend () -> com.elkuku.ingressbanners.github.WorkflowRun?) {
+    private suspend fun follow(login: String, find: suspend () -> dev.elkuku.kmybanners.github.WorkflowRun?) {
         repeat(120) {
             delay(5000)
             val run = find()
@@ -207,7 +221,7 @@ class MainViewModel(
         val login = _state.value.bannergressLogin ?: return
         _state.update { it.copy(bannergressLogin = null) }
         work {
-            if (!bgAuth.finish(login, code)) throw Exception("Bannergress refused the sign-in. Try again.")
+            if (!bgAuth.finish(login, code)) throw AppException(UiError(R.string.error_bannergress_refused))
             _state.update { it.copy(bannergress = true) }
         }
     }
@@ -287,11 +301,16 @@ class MainViewModel(
         try {
             block()
         } catch (e: NotSignedInException) {
-            _state.value = UiState(loading = false, error = "Please sign in to GitHub again.")
+            _state.value = UiState(loading = false, error = UiError(R.string.error_github_signed_out))
+        } catch (e: BannergressSignedOutException) {
+            _state.update { it.copy(loading = false, uploaded = null, error = UiError(R.string.error_bannergress_signed_out)) }
+        } catch (e: AppException) {
+            _state.update { it.copy(loading = false, uploaded = null, error = e.error) }
         } catch (e: kotlinx.coroutines.CancellationException) {
             throw e
         } catch (e: Exception) {
-            _state.update { it.copy(loading = false, uploaded = null, error = e.message ?: e.toString()) }
+            _state.update { it.copy(loading = false, uploaded = null,
+                error = UiError(R.string.error_generic, listOf(e.message ?: e.toString()))) }
         } finally {
             _state.update { it.copy(busy = false) }
         }

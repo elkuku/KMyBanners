@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "IngressBanners"
+rootProject.name = "KMyBanners"
 include(":app")

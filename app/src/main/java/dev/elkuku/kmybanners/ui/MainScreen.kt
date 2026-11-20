@@ -1,4 +1,4 @@
-package com.elkuku.ingressbanners.ui
+package dev.elkuku.kmybanners.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,6 +28,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import dev.elkuku.kmybanners.R
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -38,15 +41,15 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun MainScreen(s: UiState, vm: MainViewModel) {
     Scaffold(topBar = {
-        TopAppBar(title = { Text("Ingress Banners") }, actions = {
-            if (s.signedIn) TextButton(onClick = vm::signOut) { Text("Sign out") }
+        TopAppBar(title = { Text(stringResource(R.string.app_name)) }, actions = {
+            if (s.signedIn) TextButton(onClick = vm::signOut) { Text(stringResource(R.string.sign_out)) }
         })
     }) { pad ->
         Column(
             Modifier.padding(pad).fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            s.error?.let { ErrorCard(it, vm::dismissError) }
+            s.error?.let { ErrorCard(errorText(it), vm::dismissError) }
             when {
                 s.loading -> CircularProgressIndicator()
                 !s.signedIn -> SignIn(s, vm)
@@ -61,26 +64,25 @@ fun MainScreen(s: UiState, vm: MainViewModel) {
 private fun SignIn(s: UiState, vm: MainViewModel) {
     val uri = LocalUriHandler.current
     val clipboard = LocalClipboardManager.current
-    Text("Your Ingress mission banners on a web page of your own.", style = MaterialTheme.typography.titleMedium)
-    Text("The app keeps the page in a repository on your GitHub account and publishes it with GitHub Pages. " +
-        "Sign in with GitHub to start.")
+    Text(stringResource(R.string.intro_title), style = MaterialTheme.typography.titleMedium)
+    Text(stringResource(R.string.intro_text))
     val code = s.code
     if (code == null) {
-        Button(onClick = vm::signIn, enabled = !s.busy) { Text("Sign in with GitHub") }
+        Button(onClick = vm::signIn, enabled = !s.busy) { Text(stringResource(R.string.sign_in_github)) }
     } else {
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text("Enter this code on GitHub and approve the app:")
+                Text(stringResource(R.string.enter_code))
                 Text(code.userCode, fontFamily = FontFamily.Monospace, fontSize = 32.sp, fontWeight = FontWeight.Bold)
                 Button(onClick = {
                     clipboard.setText(AnnotatedString(code.userCode))
                     uri.openUri(code.verificationUri)
-                }) { Text("Copy the code and open GitHub") }
+                }) { Text(stringResource(R.string.copy_code)) }
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     LinearProgressIndicator(Modifier.weight(1f).padding(top = 8.dp))
-                    TextButton(onClick = vm::cancelSignIn) { Text("Cancel") }
+                    TextButton(onClick = vm::cancelSignIn) { Text(stringResource(R.string.cancel)) }
                 }
-                Text("Waiting for GitHub…", style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.waiting_github), style = MaterialTheme.typography.bodySmall)
             }
         }
     }
@@ -89,12 +91,11 @@ private fun SignIn(s: UiState, vm: MainViewModel) {
 @Composable
 private fun CreatePage(s: UiState, vm: MainViewModel) {
     var agent by remember { mutableStateOf("") }
-    Text("Signed in as ${s.login}", style = MaterialTheme.typography.titleMedium)
-    Text("The app creates the repository ${s.login}/${MainViewModel.REPO} for your page. " +
-        "It is public: the page shows on a map where you did banners.")
-    OutlinedTextField(agent, { agent = it }, label = { Text("Agent name") }, singleLine = true,
+    Text(stringResource(R.string.signed_in_as, s.login.orEmpty()), style = MaterialTheme.typography.titleMedium)
+    Text(stringResource(R.string.create_text, "${s.login}/${MainViewModel.REPO}"))
+    OutlinedTextField(agent, { agent = it }, label = { Text(stringResource(R.string.agent_name)) }, singleLine = true,
         modifier = Modifier.fillMaxWidth())
-    Button(onClick = { vm.createPage(agent) }, enabled = !s.busy && agent.isNotBlank()) { Text("Create my page") }
+    Button(onClick = { vm.createPage(agent) }, enabled = !s.busy && agent.isNotBlank()) { Text(stringResource(R.string.create_page)) }
     if (s.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
 }
 
@@ -103,31 +104,32 @@ private fun Page(s: UiState, vm: MainViewModel) {
     val uri = LocalUriHandler.current
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("Your page", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.your_page), style = MaterialTheme.typography.titleMedium)
             val url = s.pageUrl
             if (url != null && (s.build == null || s.build.done)) {
                 TextButton(onClick = { uri.openUri(url) }) { Text(url) }
             } else if (s.build != null) {
-                Text("Building…")
+                Text(stringResource(R.string.building))
             } else {
-                Text("Not published yet: share your mission medal screenshots.")
+                Text(stringResource(R.string.not_published))
             }
             TextButton(onClick = { uri.openUri("https://github.com/${s.repo}") }) { Text("github.com/${s.repo}") }
             if (s.build?.done != false && s.pageUrl != null) {
-                TextButton(onClick = vm::buildAgain, enabled = !s.busy) { Text("Build my page again") }
+                TextButton(onClick = vm::buildAgain, enabled = !s.busy) { Text(stringResource(R.string.build_again)) }
             }
         }
     }
     when {
         s.uploaded != null -> Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("Uploading screenshot ${s.uploaded} of ${s.shots.size}…")
+            Text(stringResource(R.string.uploading, s.uploaded, s.shots.size))
             LinearProgressIndicator({ s.uploaded / s.shots.size.coerceAtLeast(1).toFloat() }, Modifier.fillMaxWidth())
         }
         s.shots.isNotEmpty() -> Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("${s.shots.size} screenshots, from ${s.shots.first().name} to ${s.shots.last().name}")
+            Text(pluralStringResource(R.plurals.shots_shared, s.shots.size, s.shots.size) + ", " +
+                stringResource(R.string.shots_range, s.shots.first().name, s.shots.last().name))
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Button(onClick = vm::upload, enabled = !s.busy) { Text("Upload and build my page") }
-                OutlinedButton(onClick = vm::clearShots) { Text("Discard") }
+                Button(onClick = vm::upload, enabled = !s.busy) { Text(stringResource(R.string.upload_build)) }
+                OutlinedButton(onClick = vm::clearShots) { Text(stringResource(R.string.discard)) }
             }
         }
         s.build != null -> BuildCard(s.build, uri::openUri, vm::buildAgain)
@@ -146,13 +148,13 @@ private fun Page(s: UiState, vm: MainViewModel) {
 private fun ToCheck(s: UiState, vm: MainViewModel) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("Check your medals", style = MaterialTheme.typography.titleMedium)
-            Text("${s.toCheck.size} medal rows could not be matched for sure. Tell the app which banner they are from.")
+            Text(stringResource(R.string.check_title), style = MaterialTheme.typography.titleMedium)
+            Text(pluralStringResource(R.plurals.check_text, s.toCheck.size, s.toCheck.size))
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Button(onClick = vm::startReview, enabled = !s.busy) { Text("Check them") }
+                Button(onClick = vm::startReview, enabled = !s.busy) { Text(stringResource(R.string.check_them)) }
                 if (s.decisions.isNotEmpty()) {
                     Button(onClick = vm::saveDecisions, enabled = !s.busy && s.build?.done != false) {
-                        Text("Save ${s.decisions.size}")
+                        Text(pluralStringResource(R.plurals.save_decisions, s.decisions.size, s.decisions.size))
                     }
                 }
             }
@@ -165,16 +167,15 @@ private fun ToCheck(s: UiState, vm: MainViewModel) {
 private fun DoneList(s: UiState, vm: MainViewModel) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("Your Bannergress done list", style = MaterialTheme.typography.titleMedium)
-            Text("The page finds your banners by comparing your medals with the pictures of the banners on " +
-                "your Bannergress done list. Upload it again after you marked new banners done.")
+            Text(stringResource(R.string.done_title), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.done_text))
             if (!s.bannergress) {
-                Button(onClick = vm::bannergressSignIn, enabled = !s.busy) { Text("Sign in to Bannergress") }
+                Button(onClick = vm::bannergressSignIn, enabled = !s.busy) { Text(stringResource(R.string.sign_in_bannergress)) }
             } else {
                 Button(onClick = vm::uploadDoneList, enabled = !s.busy && s.build?.done != false) {
-                    Text("Upload my done list")
+                    Text(stringResource(R.string.upload_done))
                 }
-                s.doneUploaded?.let { Text("$it banners uploaded.", style = MaterialTheme.typography.bodySmall) }
+                s.doneUploaded?.let { Text(pluralStringResource(R.plurals.done_uploaded, it, it), style = MaterialTheme.typography.bodySmall) }
             }
         }
     }
@@ -186,14 +187,15 @@ private fun BuildCard(b: Build, open: (String) -> Unit, again: () -> Unit) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(
                 when {
-                    !b.done -> "Building your page (${b.status.replace('_', ' ')})…"
-                    b.conclusion == "success" -> "Your page is up to date."
-                    else -> "The build failed (${b.conclusion})."
+                    !b.done -> stringResource(R.string.build_running,
+                        stringResource(if (b.status == "queued") R.string.build_queued else R.string.build_in_progress))
+                    b.conclusion == "success" -> stringResource(R.string.build_ok)
+                    else -> stringResource(R.string.build_failed, b.conclusion.orEmpty())
                 },
             )
             if (!b.done) LinearProgressIndicator(Modifier.fillMaxWidth())
-            b.url?.let { TextButton(onClick = { open(it) }) { Text("Show the build on GitHub") } }
-            if (b.done && b.conclusion != "success") Button(onClick = again) { Text("Try again") }
+            b.url?.let { TextButton(onClick = { open(it) }) { Text(stringResource(R.string.show_build)) } }
+            if (b.done && b.conclusion != "success") Button(onClick = again) { Text(stringResource(R.string.try_again)) }
         }
     }
 }
@@ -202,11 +204,10 @@ private fun BuildCard(b: Build, open: (String) -> Unit, again: () -> Unit) {
 private fun HowTo() {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("Add your mission medals", style = MaterialTheme.typography.titleMedium)
-            Text("1. In Ingress, open your agent profile, scroll to the mission medals and tap the arrow next to them.")
-            Text("2. Take a screenshot, scroll about half a screen, wait until the pictures have loaded, " +
-                "take the next one — down to the end of the list.")
-            Text("3. Select the screenshots in your gallery and share them with Ingress Banners.")
+            Text(stringResource(R.string.howto_title), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.howto_1))
+            Text(stringResource(R.string.howto_2))
+            Text(stringResource(R.string.howto_3))
         }
     }
 }
@@ -216,7 +217,15 @@ private fun ErrorCard(message: String, dismiss: () -> Unit) {
     Card(Modifier.fillMaxWidth()) {
         Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(message, Modifier.weight(1f), color = MaterialTheme.colorScheme.error)
-            TextButton(onClick = dismiss) { Text("OK") }
+            TextButton(onClick = dismiss) { Text(stringResource(R.string.ok)) }
         }
     }
+}
+
+/** The message of an error, in the phone's language. */
+@Composable
+private fun errorText(e: UiError): String = if (e.plural != 0) {
+    pluralStringResource(e.plural, e.count, *e.args.toTypedArray())
+} else {
+    stringResource(e.res, *e.args.toTypedArray())
 }

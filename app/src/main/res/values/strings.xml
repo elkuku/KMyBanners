@@ -1,3 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Ingress Banners</string>
+    <!-- German and Spanish in values-de and values-es -->
+    <string name="app_name" translatable="false">KMyBanners</string>
+    <string name="sign_out">Sign out</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="intro_title">Your Ingress mission banners on a web page of your own.</string>
+    <string name="intro_text">The app keeps the page in a repository on your GitHub account and publishes it with GitHub Pages. Sign in with GitHub to start.</string>
+    <string name="sign_in_github">Sign in with GitHub</string>
+    <string name="enter_code">Enter this code on GitHub and approve the app:</string>
+    <string name="copy_code">Copy the code and open GitHub</string>
+    <string name="waiting_github">Waiting for GitHub…</string>
+    <string name="signed_in_as">Signed in as %1$s</string>
+    <string name="create_text">The app creates the repository %1$s for your page. It is public: the page shows on a map where you did banners.</string>
+    <string name="agent_name">Agent name</string>
+    <string name="create_page">Create my page</string>
+    <string name="your_page">Your page</string>
+    <string name="building">Building…</string>
+    <string name="not_published">Not published yet: share your mission medal screenshots.</string>
+    <string name="build_again">Build my page again</string>
+    <string name="uploading">Uploading screenshot %1$d of %2$d…</string>
+    <string name="shots_range">from %1$s to %2$s</string>
+    <string name="upload_build">Upload and build my page</string>
+    <string name="discard">Discard</string>
+    <string name="check_title">Check your medals</string>
+    <string name="check_them">Check them</string>
+    <string name="done_title">Your Bannergress done list</string>
+    <string name="done_text">The page finds your banners by comparing your medals with the pictures of the banners on your Bannergress done list. Upload it again after you marked new banners done.</string>
+    <string name="sign_in_bannergress">Sign in to Bannergress</string>
+    <string name="upload_done">Upload my done list</string>
+    <string name="build_running">Building your page (%1$s)…</string>
+    <string name="build_queued">queued</string>
+    <string name="build_in_progress">in progress</string>
+    <string name="build_ok">Your page is up to date.</string>
+    <string name="build_failed">The build failed (%1$s).</string>
+    <string name="show_build">Show the build on GitHub</string>
+    <string name="try_again">Try again</string>
+    <string name="howto_title">Add your mission medals</string>
+    <string name="howto_1">1. In Ingress, open your agent profile, scroll to the mission medals and tap the arrow next to them.</string>
+    <string name="howto_2">2. Take a screenshot, scroll about half a screen, wait until the pictures have loaded, take the next one — down to the end of the list.</string>
+    <string name="howto_3">3. Select the screenshots in your gallery and share them with KMyBanners.</string>
+    <string name="review_title">Medal row %1$d of %2$d</string>
+    <string name="review_done">Done</string>
+    <string name="review_these">These medals in your list:</string>
+    <string name="review_medals">The medal row</string>
+    <string name="review_which">Which banner are they from?</string>
+    <string name="review_none">No banner of your done list looks like them.</string>
+    <string name="not_on_bannergress">Not on Bannergress</string>
+    <string name="skip">Skip</string>
+    <string name="review_name">Name (as in Ingress, optional)</string>
+    <string name="review_save_none">Save as not on Bannergress</string>
+    <string name="review_previous">Previous row</string>
+    <string name="your_choice">Your choice</string>
+    <string name="error_code_expired">The sign-in code expired or was declined. Try again.</string>
+    <string name="error_repo_taken">You already have a repository called %1$s that isn\'t a banner page. Rename it on GitHub, then try again.</string>
+    <string name="error_bannergress_refused">Bannergress refused the sign-in. Try again.</string>
+    <string name="error_github_signed_out">Please sign in to GitHub again.</string>
+    <string name="error_bannergress_signed_out">Please sign in to Bannergress again.</string>
+    <string name="error_generic">Something went wrong: %1$s</string>
+    <plurals name="shots_shared">
+        <item quantity="one">%d screenshot</item>
+        <item quantity="other">%d screenshots</item>
+    </plurals>
+    <plurals name="check_text">
+        <item quantity="one">%d medal row could not be matched for sure. Tell the app which banner it is from.</item>
+        <item quantity="other">%d medal rows could not be matched for sure. Tell the app which banner they are from.</item>
+    </plurals>
+    <plurals name="save_decisions">
+        <item quantity="one">Save %d</item>
+        <item quantity="other">Save %d</item>
+    </plurals>
+    <plurals name="done_uploaded">
+        <item quantity="one">%d banner uploaded.</item>
+        <item quantity="other">%d banners uploaded.</item>
+    </plurals>
+    <plurals name="missions">
+        <item quantity="one">%d mission</item>
+        <item quantity="other">%d missions</item>
+    </plurals>
+    <plurals name="error_shots_unreadable">
+        <item quantity="one">%d screenshot could not be read.</item>
+        <item quantity="other">%d screenshots could not be read.</item>
+    </plurals>
 </resources>
