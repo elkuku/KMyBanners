@@ -7,7 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.elkuku.kmybanners.Account
 import dev.elkuku.kmybanners.NotSignedInException
-import dev.elkuku.kmybanners.Correction
+import dev.elkuku.kmybanners.BannerOption
+import dev.elkuku.kmybanners.Choice
+import dev.elkuku.kmybanners.bannerId
 import dev.elkuku.kmybanners.R
 import dev.elkuku.kmybanners.Corrections
 import dev.elkuku.kmybanners.PageBanner
@@ -72,10 +74,19 @@ data class UiState(
     val bannergress: Boolean = false,            // signed in to Bannergress
     val bannergressLogin: BannergressLogin? = null, // the WebView sign-in while it is open
     val doneUploaded: Int? = null,               // banners in the done list just uploaded
-    val toCheck: List<PageBanner> = emptyList(), // medal rows the build could not match for sure
-    val reviewing: Int? = null,                  // the row on the review screen (index into toCheck)
-    val decisions: Map<String, Correction> = emptyMap(), // by fingerprint, not saved yet
-)
+    val banners: List<PageBanner> = emptyList(),   // the page's medal row groups (banners.json)
+    val reviewList: List<PageBanner> = emptyList(),// what the review screen goes through
+    val reviewing: Int? = null,                    // the entry on the review screen (index into reviewList)
+    val decisions: Map<String, Pair<PageBanner, Choice>> = emptyMap(), // by first fingerprint, not saved yet
+    val lookup: Lookup? = null,                    // a Bannergress link being checked
+    val myBanners: Boolean = false,                // the "My banners" list is open
+) {
+    /** The medal rows the build could not match for sure. */
+    val toCheck: List<PageBanner> get() = banners.filter { it.status == "review" }
+}
+
+/** A Bannergress link the agent entered: being checked, found, or not found. */
+data class Lookup(val id: String, val banner: BannerOption? = null, val notFound: Boolean = false)
 
 class MainViewModel(
     private val account: Account,
@@ -84,7 +95,8 @@ class MainViewModel(
     private val resolver: ContentResolver,
     private val bgAuth: BannergressAuth,
     private val bgApi: BannergressApi,
-    private val fetchToCheck: suspend (pageUrl: String) -> List<PageBanner>?,
+    private val fetchBanners: suspend (pageUrl: String) -> List<PageBanner>?,
+    private val lookUp: suspend (id: String) -> BannerOption?,
 ) : ViewModel() {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state
@@ -252,41 +264,61 @@ class MainViewModel(
         follow(login, sha)
     }
 
-    // --- Checking the rows the build could not match for sure ---
+    // --- Checking the rows the build could not match for sure, and changing any entry later ---
 
     private suspend fun loadToCheck() {
         val url = _state.value.pageUrl ?: return
-        fetchToCheck(url)?.let { rows -> _state.update { it.copy(toCheck = rows) } }
+        fetchBanners(url)?.let { rows -> _state.update { it.copy(banners = rows) } }
     }
 
+    /** The rows to check, starting at the first one without a decision. */
     fun startReview() = _state.update { s ->
-        // Start at the first row without a decision
         val i = s.toCheck.indexOfFirst { it.fp !in s.decisions }.takeIf { it >= 0 } ?: 0
-        s.copy(reviewing = i)
+        s.copy(reviewList = s.toCheck, reviewing = i, lookup = null)
     }
 
-    fun closeReview() = _state.update { it.copy(reviewing = null) }
+    fun openMyBanners() = _state.update { it.copy(myBanners = true) }
 
-    /** The agent's choice for the row on the screen (null: undecided again); then the next row. */
-    fun decide(correction: Correction?) = _state.update { s ->
+    fun closeMyBanners() = _state.update { it.copy(myBanners = false) }
+
+    /** One entry of "My banners" on the review screen, to change it. */
+    fun edit(entry: PageBanner) = _state.update { it.copy(reviewList = listOf(entry), reviewing = 0, lookup = null) }
+
+    fun closeReview() = _state.update { it.copy(reviewing = null, lookup = null) }
+
+    /** The agent's choice for the entry on the screen (null: undecided again); then the next one. */
+    fun decide(choice: Choice?) = _state.update { s ->
         val i = s.reviewing ?: return@update s
-        val fp = s.toCheck[i].fp
-        val decisions = if (correction == null) s.decisions - fp else s.decisions + (fp to correction)
-        s.copy(decisions = decisions, reviewing = if (i + 1 < s.toCheck.size) i + 1 else null)
+        val entry = s.reviewList[i]
+        val decisions = if (choice == null) s.decisions - entry.fp else s.decisions + (entry.fp to (entry to choice))
+        s.copy(decisions = decisions, reviewing = if (i + 1 < s.reviewList.size) i + 1 else null, lookup = null)
     }
 
-    fun previousRow() = _state.update { s -> s.copy(reviewing = s.reviewing?.let { (it - 1).coerceAtLeast(0) }) }
+    fun previousRow() = _state.update { s ->
+        s.copy(reviewing = s.reviewing?.let { (it - 1).coerceAtLeast(0) }, lookup = null)
+    }
 
-    /** The decisions to corrections.json (added to the earlier ones) in one commit; then follow the build. */
+    /** Checks a Bannergress link (or id) the agent entered: does the banner exist? */
+    fun checkLink(text: String) {
+        val id = bannerId(text) ?: run { _state.update { it.copy(lookup = Lookup(text.trim(), notFound = true)) }; return }
+        _state.update { it.copy(lookup = Lookup(id)) }
+        work {
+            val found = lookUp(id)
+            _state.update { it.copy(lookup = Lookup(id, found, notFound = found == null)) }
+        }
+    }
+
+    /** The decisions to corrections.json (one per row, added to the earlier ones) in one commit; then the build. */
     fun saveDecisions() = work {
         val login = _state.value.login ?: return@work
-        val new = _state.value.decisions.values
-        if (new.isEmpty()) return@work
+        val chosen = _state.value.decisions.values
+        if (chosen.isEmpty()) return@work
+        val new = chosen.flatMap { (entry, choice) -> choice.corrections(entry) }
         val old = api.file(login, REPO, "corrections.json")?.decodeToString()
             ?.let { runCatching { json.decodeFromString<Corrections>(it) }.getOrNull() } ?: Corrections()
         val file = prettyJson.encodeToString(Corrections.serializer(), old.plus(new)) + "\n"
         val sha = api.commit(login, REPO, listOf(RepoFile("corrections.json", file.toByteArray())),
-            "Check ${new.size} medal rows")
+            "Check ${chosen.size} medal rows")
         _state.update { it.copy(decisions = emptyMap(), reviewing = null, build = Build("queued")) }
         follow(login, sha)
     }

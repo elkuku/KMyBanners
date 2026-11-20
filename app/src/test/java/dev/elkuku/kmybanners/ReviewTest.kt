@@ -30,8 +30,31 @@ class ReviewTest {
                  "options":[{"id":"b2","dist":0.12,"title":"MD","missions":24,"picture":"/bnrs/pictures/p"}]}]}""",
                 HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json"))
         })
-        val rows = rowsToCheck(http, "https://agent.github.io/ingress-banners/")!!
+        val all = pageBanners(http, "https://agent.github.io/ingress-banners/")!!
+        assertEquals(2, all.size)
+        val rows = all.filter { it.status == "review" }
         assertEquals(1, rows.size)
         assertEquals("https://api.bannergress.com/bnrs/pictures/p", rows[0].options[0].pictureUrl)
+    }
+
+    @Test
+    fun bannerIdFromLinks() {
+        assertEquals("glyph-1567", bannerId("https://bannergress.com/banner/glyph-1567"))
+        assertEquals("glyph-1567", bannerId(" https://bannergress.com/banner/glyph-1567?x=1 "))
+        assertEquals("kleiner-mainzer-höhenweg-7629", bannerId("https://bannergress.com/banner/kleiner-mainzer-h%C3%B6henweg-7629"))
+        assertEquals("glyph-1567", bannerId("glyph-1567"))
+        assertNull(bannerId("not a link"))
+        assertNull(bannerId(""))
+    }
+
+    @Test
+    fun aChoiceAppliesToEveryRowOfTheEntry() {
+        val entry = PageBanner(rows = "3-5", status = "match", img = "i", fp = "a", fps = listOf("a", "b", "c"))
+        val c = Choice(single = true).corrections(entry)
+        assertEquals(listOf("a", "b", "c"), c.map { it.fp })
+        assertEquals(true, c[0].single)
+        assertEquals("""{"fp":"a","id":null,"single":true}""".replace(",\"id\":null", ""),
+            json.encodeToString(Correction.serializer(), c[0]))
+        assertEquals(listOf("x"), Choice(id = "b1").corrections(PageBanner(rows = "1", status = "review", img = "i", fp = "x")).map { it.fp })
     }
 }

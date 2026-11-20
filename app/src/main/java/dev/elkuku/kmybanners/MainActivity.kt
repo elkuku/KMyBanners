@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
                 val account = Account(PrefsStore(getSharedPreferences("account", MODE_PRIVATE)), auth)
                 val bgAuth = BannergressAuth(http, PrefsStore(getSharedPreferences("bannergress", MODE_PRIVATE)))
                 return MainViewModel(account, auth, GitHubApi(http, account::accessToken), contentResolver,
-                    bgAuth, BannergressApi(http, bgAuth::accessToken)) { rowsToCheck(http, it) } as T
+                    bgAuth, BannergressApi(http, bgAuth::accessToken), { pageBanners(http, it) }, { lookUpBanner(http, it) }) as T
             }
         }
     }

@@ -118,6 +118,9 @@ private fun Page(s: UiState, vm: MainViewModel) {
             if (s.build?.done != false && s.pageUrl != null) {
                 TextButton(onClick = vm::buildAgain, enabled = !s.busy) { Text(stringResource(R.string.build_again)) }
             }
+            if (s.banners.isNotEmpty()) {
+                TextButton(onClick = vm::openMyBanners) { Text(stringResource(R.string.my_banners)) }
+            }
         }
     }
     when {
@@ -137,10 +140,11 @@ private fun Page(s: UiState, vm: MainViewModel) {
         else -> HowTo()
     }
     if (s.uploaded == null && s.shots.isEmpty()) {
-        if (s.toCheck.isNotEmpty()) ToCheck(s, vm)
+        if (s.toCheck.isNotEmpty() || s.decisions.isNotEmpty()) ToCheck(s, vm)
         DoneList(s, vm)
     }
     s.bannergressLogin?.let { BannergressLoginDialog(it, vm::bannergressCode, vm::bannergressCancel) }
+    MyBannersDialog(s, vm)
     ReviewDialog(s, vm)
 }
 
@@ -150,9 +154,11 @@ private fun ToCheck(s: UiState, vm: MainViewModel) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(stringResource(R.string.check_title), style = MaterialTheme.typography.titleMedium)
-            Text(pluralStringResource(R.plurals.check_text, s.toCheck.size, s.toCheck.size))
+            if (s.toCheck.isNotEmpty()) Text(pluralStringResource(R.plurals.check_text, s.toCheck.size, s.toCheck.size))
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Button(onClick = vm::startReview, enabled = !s.busy) { Text(stringResource(R.string.check_them)) }
+                if (s.toCheck.isNotEmpty()) {
+                    Button(onClick = vm::startReview, enabled = !s.busy) { Text(stringResource(R.string.check_them)) }
+                }
                 if (s.decisions.isNotEmpty()) {
                     Button(onClick = vm::saveDecisions, enabled = !s.busy && s.build?.done != false) {
                         Text(pluralStringResource(R.plurals.save_decisions, s.decisions.size, s.decisions.size))
