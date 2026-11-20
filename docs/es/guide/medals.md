@@ -36,8 +36,9 @@ Consejos:
 - **Espera a las imágenes:** Ingress carga la imagen de una medalla solo cuando está en la pantalla. Un
   círculo vacío (un anillo blanco alrededor de negro) significa que aún no ha cargado: espera un momento
   antes de la captura.
-- **Siempre la lista entera:** cuando tengas medallas nuevas, comparte capturas nuevas de toda la lista.
-  Sustituyen a las anteriores.
+- **Para actualizar bastan las medallas nuevas:** cuando tengas medallas nuevas, haz capturas desde el
+  principio de la lista hasta medallas que ya están en tu página, y unas filas más. La app las une a las
+  medallas de tu página donde coinciden. Hasta el final de la lista también vale.
 
 ## La creación de la página {#la-creacion}
 

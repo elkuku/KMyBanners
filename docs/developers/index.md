@@ -17,14 +17,16 @@ workflows). Everything the app does after that is a commit to that repository:
 |---|---|---|
 | `config.json` | the app | The agent name, when the done list was uploaded |
 | `inbox/<time>/` | the app | New screenshots (JPEG), one commit for all of them |
+| `captures/<time>/` | the build | The screenshots of every build, moved from the inbox and kept |
 | `done.json` | the app | The Bannergress done list |
-| `corrections.json` | the app | The agent's choices for medal rows, by the rows' picture fingerprints |
-| `capture/medals.jpg` | the build | The stitched mission medals |
+| `corrections.json` | the app | The agent's choices for medal rows, by the rows' picture fingerprints and their place from the end of the list (new medals come in on top, so it stays) |
+| `capture/medals.jpg` | the build | The stitched mission medals; new screenshots are joined onto them |
 | `notes.json` | by hand | Optional notes per banner |
 
 The repository's workflow `banner-page.yml` calls
-`elkuku/KMyBanners-tool/.github/workflows/build-page.yml@v1`. It stitches the newest screenshots,
-empties the inbox, matches each medal row with the done list and the corrections, looks up nearby
+`elkuku/KMyBanners-tool/.github/workflows/build-page.yml@v1`. It stitches the newest screenshots and
+joins them onto the medals before, where three rows in a row are the same (so an update needs screenshots
+only down to medals that were there before), moves the inbox to `captures/`, matches each medal row with the done list and the corrections, looks up nearby
 banners on Bannergress for rows it can't match, and deploys the page. The app starts it with
 `workflow_dispatch` and follows the run.
 

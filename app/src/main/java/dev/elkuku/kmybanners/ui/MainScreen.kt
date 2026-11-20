@@ -264,7 +264,9 @@ private fun ShotsStep(s: UiState) {
         }
         if (howto) {
             Text(stringResource(R.string.howto_1), style = MaterialTheme.typography.bodySmall)
-            Text(stringResource(R.string.howto_2), style = MaterialTheme.typography.bodySmall)
+            // On a page with medals, an update needs screenshots only down to medals that are already there
+            Text(stringResource(if (s.banners.isEmpty()) R.string.howto_2 else R.string.howto_2_update),
+                style = MaterialTheme.typography.bodySmall)
             Text(stringResource(R.string.howto_3), style = MaterialTheme.typography.bodySmall)
         }
     }

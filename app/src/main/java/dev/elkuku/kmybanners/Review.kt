@@ -19,6 +19,7 @@ data class PageBanner(
     val img: String,                // the rows' medals, relative to the page
     val fp: String,                 // the first row's fingerprint
     val fps: List<String> = emptyList(), // every row's (a decision applies to all of them)
+    val ends: List<Int> = emptyList(),   // every row's place from the end of the list (0: the last row)
     val count: Int = 0,
     val id: String? = null,         // the matched Bannergress banner
     val title: String? = null,
@@ -48,12 +49,20 @@ data class BannerOption(
  * ([id] null, with a [name]).
  */
 @Serializable
-data class Correction(val fp: String, val id: String?, val name: String? = null, val single: Boolean? = null)
+data class Correction(
+    val fp: String,
+    val id: String?,
+    val name: String? = null,
+    val single: Boolean? = null,
+    // The row's place from the end of the list: new medals come in on top, so it stays, and the build applies the
+    // decision only there (look-alike banners are closer to each other than a row to itself in a new capture)
+    val end: Int? = null,
+)
 
 /** The agent's decision for a whole entry (all its rows), before it is saved. */
 data class Choice(val id: String? = null, val name: String? = null, val single: Boolean = false, val title: String? = null) {
     fun corrections(entry: PageBanner): List<Correction> =
-        entry.allFps.map { Correction(it, id, name, single.takeIf { s -> s }) }
+        entry.allFps.mapIndexed { k, fp -> Correction(fp, id, name, single.takeIf { s -> s }, entry.ends.getOrNull(k)) }
 }
 
 @Serializable

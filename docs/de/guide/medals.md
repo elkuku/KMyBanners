@@ -36,8 +36,9 @@ Tipps:
 - **Auf die Bilder warten:** Ingress lädt das Bild einer Medaille erst, wenn sie auf dem Bildschirm ist.
   Ein leerer Kreis (ein weißer Ring um Schwarz) heißt, sie ist noch nicht geladen: Warte kurz vor dem
   Screenshot.
-- **Jedes Mal die ganze Liste:** Wenn du neue Medaillen hast, teile neue Screenshots der ganzen Liste.
-  Sie ersetzen die alten.
+- **Für Updates reichen die neuen Medaillen:** Wenn du neue Medaillen hast, mach Screenshots vom Anfang
+  der Liste bis zu Medaillen, die schon auf deiner Seite sind, und ein paar Reihen weiter. Die App setzt
+  sie dort an die Medaillen deiner Seite an, wo sie sich treffen. Bis ans Ende der Liste geht auch.
 
 ## Das Erstellen der Seite {#das-erstellen}
 

@@ -37,6 +37,7 @@
     <string name="try_again">Try again</string>
     <string name="howto_1">1. In Ingress, open your agent profile, scroll to the mission medals and tap the arrow next to them.</string>
     <string name="howto_2">2. Take a screenshot, scroll about half a screen, wait until the pictures have loaded, take the next one — down to the end of the list.</string>
+    <string name="howto_2_update">2. Take a screenshot, scroll about half a screen, wait until the pictures have loaded, take the next one — down to medals that are already on your page, and a few rows more.</string>
     <string name="howto_3">3. Select the screenshots in your gallery and share them with KMyBanners.</string>
     <string name="review_title">Medal row %1$d of %2$d</string>
     <string name="review_done">Done</string>
@@ -111,7 +112,7 @@
     <string name="less">Less</string>
     <string name="shots_title">Your mission medals</string>
     <string name="shots_none">Not on your page yet: take screenshots of your mission medals in Ingress and share them with KMyBanners.</string>
-    <string name="shots_update">New medals? Share new screenshots of the whole list.</string>
+    <string name="shots_update">New medals? Share screenshots from the top of the list down to medals that are already on your page.</string>
     <string name="howto_show">How to take the screenshots</string>
     <string name="check_none">Every medal row is matched.</string>
     <plurals name="banners_count">

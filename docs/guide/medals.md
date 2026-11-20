@@ -35,8 +35,9 @@ Tips:
   screen is safe.
 - **Wait for the pictures:** Ingress loads a medal's picture only when it is on the screen. An empty
   circle (a white ring around black) means it hasn't loaded yet: wait a moment before the screenshot.
-- **The whole list, every time:** when you have new medals, share new screenshots of the whole list.
-  They replace the old ones.
+- **Updates need only the new medals:** when you have new medals, take screenshots from the top of the
+  list down to medals that are already on your page, and a few rows more. The app joins them onto your
+  page's medals where they meet. Going down to the end of the list works too.
 
 ## The build
 

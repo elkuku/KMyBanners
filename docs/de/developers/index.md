@@ -17,14 +17,17 @@ Alles, was die App danach tut, ist ein Commit in dieses Repository:
 |---|---|---|
 | `config.json` | der App | Der Agentenname, wann die Erledigt-Liste hochgeladen wurde |
 | `inbox/<Zeit>/` | der App | Neue Screenshots (JPEG), ein Commit für alle |
+| `captures/<Zeit>/` | dem Build | Die Screenshots jedes Builds, aus dem Eingang verschoben und aufbewahrt |
 | `done.json` | der App | Die Bannergress-Erledigt-Liste |
-| `corrections.json` | der App | Die Auswahl des Agenten für Medaillenreihen, nach den Bild-Fingerabdrücken der Reihen |
-| `capture/medals.jpg` | dem Build | Die zusammengesetzten Missionsmedaillen |
+| `corrections.json` | der App | Die Auswahl des Agenten für Medaillenreihen, nach den Bild-Fingerabdrücken der Reihen und ihrem Platz vom Ende der Liste (neue Medaillen kommen oben dazu, er bleibt also) |
+| `capture/medals.jpg` | dem Build | Die zusammengesetzten Missionsmedaillen; neue Screenshots werden daran angesetzt |
 | `notes.json` | von Hand | Optionale Notizen pro Banner |
 
 Der Workflow `banner-page.yml` des Repositorys ruft
 `elkuku/KMyBanners-tool/.github/workflows/build-page.yml@v1` auf. Er setzt die neuesten Screenshots
-zusammen, leert den Eingang, gleicht jede Medaillenreihe mit der Erledigt-Liste und den Korrekturen ab,
+zusammen und setzt sie an die Medaillen davor an, wo drei Reihen hintereinander gleich sind (so braucht
+ein Update Screenshots nur bis zu Medaillen, die schon da waren), verschiebt den Eingang nach `captures/`,
+gleicht jede Medaillenreihe mit der Erledigt-Liste und den Korrekturen ab,
 sucht für Reihen ohne Treffer Banner in der Nähe auf Bannergress und veröffentlicht die Seite. Die App
 startet ihn mit `workflow_dispatch` und verfolgt den Lauf.
 

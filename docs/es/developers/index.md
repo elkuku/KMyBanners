@@ -17,14 +17,16 @@ Todo lo que la app hace después es un commit en ese repositorio:
 |---|---|---|
 | `config.json` | la app | El nombre de agente, cuándo se subió la lista de completados |
 | `inbox/<hora>/` | la app | Capturas nuevas (JPEG), un commit para todas |
+| `captures/<hora>/` | la compilación | Las capturas de cada compilación, movidas desde la bandeja de entrada y guardadas |
 | `done.json` | la app | La lista de completados de Bannergress |
-| `corrections.json` | la app | Las elecciones del agente para filas de medallas, por las huellas de imagen de las filas |
-| `capture/medals.jpg` | la compilación | Las medallas de misión unidas |
+| `corrections.json` | la app | Las elecciones del agente para filas de medallas, por las huellas de imagen de las filas y su lugar desde el final de la lista (las medallas nuevas llegan arriba, así que no cambia) |
+| `capture/medals.jpg` | la compilación | Las medallas de misión unidas; las capturas nuevas se unen a ellas |
 | `notes.json` | a mano | Notas opcionales por banner |
 
 El workflow `banner-page.yml` del repositorio llama a
-`elkuku/KMyBanners-tool/.github/workflows/build-page.yml@v1`. Une las capturas más nuevas, vacía la
-bandeja de entrada, compara cada fila de medallas con la lista de completados y las correcciones, busca
+`elkuku/KMyBanners-tool/.github/workflows/build-page.yml@v1`. Une las capturas más nuevas y las une a
+las medallas de antes donde tres filas seguidas son iguales (así una actualización necesita capturas solo
+hasta medallas que ya estaban), mueve la bandeja de entrada a `captures/`, compara cada fila de medallas con la lista de completados y las correcciones, busca
 banners cercanos en Bannergress para las filas sin coincidencia y publica la página. La app lo inicia
 con `workflow_dispatch` y sigue la ejecución.
 

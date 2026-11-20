@@ -57,4 +57,14 @@ class ReviewTest {
             json.encodeToString(Correction.serializer(), c[0]))
         assertEquals(listOf("x"), Choice(id = "b1").corrections(PageBanner(rows = "1", status = "review", img = "i", fp = "x")).map { it.fp })
     }
+
+    @Test
+    fun aChoiceKeepsEachRowsPlaceFromTheEnd() {
+        val entry = PageBanner(rows = "3-4", status = "review", img = "i", fp = "a", fps = listOf("a", "b"), ends = listOf(9, 8))
+        val c = Choice(id = "b1").corrections(entry)
+        assertEquals(listOf(9, 8), c.map { it.end })
+        assertEquals("""{"fp":"a","id":"b1","end":9}""", json.encodeToString(Correction.serializer(), c[0]))
+        // A page built before the places were written: no place
+        assertNull(Choice(id = "b1").corrections(PageBanner(rows = "1", status = "review", img = "i", fp = "x"))[0].end)
+    }
 }
