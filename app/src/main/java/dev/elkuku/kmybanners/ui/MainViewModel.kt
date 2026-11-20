@@ -122,8 +122,11 @@ class MainViewModel(
         signIn = work {
             val code = auth.start()
             _state.update { it.copy(code = code) }
-            val tokens = auth.await(code)
-            _state.update { it.copy(code = null) }
+            val tokens = try {
+                auth.await(code)
+            } finally {
+                _state.update { it.copy(code = null) } // also when it fails: no code card left waiting
+            }
             if (tokens == null) {
                 _state.update { it.copy(error = UiError(R.string.error_code_expired)) }
                 return@work

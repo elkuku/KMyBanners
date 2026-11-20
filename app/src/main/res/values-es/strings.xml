@@ -8,6 +8,7 @@
     <string name="sign_in_github">Iniciar sesión con GitHub</string>
     <string name="enter_code">Introduce este código en GitHub y autoriza la app:</string>
     <string name="copy_code">Copiar el código y abrir GitHub</string>
+    <string name="code_hint">Escribe el código en GitHub: al pegarlo puede que solo se rellene la primera casilla.</string>
     <string name="waiting_github">Esperando a GitHub…</string>
     <string name="signed_in_as">Sesión iniciada como %1$s</string>
     <string name="create_text">La app crea el repositorio %1$s para tu página. Es público: la página muestra en un mapa dónde hiciste banners.</string>

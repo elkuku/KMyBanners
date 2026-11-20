@@ -7,6 +7,7 @@ import io.ktor.client.request.forms.submitForm
 import io.ktor.http.ContentType
 import io.ktor.http.parameters
 import kotlinx.coroutines.delay
+import java.io.IOException
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -57,9 +58,14 @@ class GitHubAuth(
         val end = now() + code.expiresIn * 1000L
         while (now() < end) {
             delay(interval * 1000L)
-            val r = token {
-                append("device_code", code.deviceCode)
-                append("grant_type", "urn:ietf:params:oauth:grant-type:device_code")
+            // A network hiccup (no DNS, a dropped connection on mobile data) only skips this poll
+            val r = try {
+                token {
+                    append("device_code", code.deviceCode)
+                    append("grant_type", "urn:ietf:params:oauth:grant-type:device_code")
+                }
+            } catch (e: IOException) {
+                continue
             }
             when {
                 r.accessToken != null -> return r.toTokens()

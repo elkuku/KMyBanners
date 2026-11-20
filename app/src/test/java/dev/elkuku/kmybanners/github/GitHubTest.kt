@@ -52,6 +52,18 @@ class GitHubTest {
     }
 
     @Test
+    fun networkErrorWhileWaitingIsRetried() = runTest {
+        var polls = 0
+        val auth = GitHubAuth(client {
+            if (++polls == 2) throw java.net.UnknownHostException("github.com")
+            if (polls < 3) json("""{"error":"authorization_pending"}""")
+            else json("""{"access_token":"gho_1","expires_in":28800}""")
+        }, "c", now = { testScheduler.currentTime })
+        assertEquals("gho_1", auth.await(DeviceCode("dc", "X", "u", 900, 5))?.access)
+        assertEquals(3, polls)
+    }
+
+    @Test
     fun deniedSignInGivesNull() = runTest {
         val auth = GitHubAuth(client { json("""{"error":"access_denied"}""") }, "c", now = { testScheduler.currentTime })
         assertNull(auth.await(DeviceCode("dc", "X", "u", 900, 5)))

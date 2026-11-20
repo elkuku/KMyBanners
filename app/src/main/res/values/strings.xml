@@ -10,6 +10,7 @@
     <string name="sign_in_github">Sign in with GitHub</string>
     <string name="enter_code">Enter this code on GitHub and approve the app:</string>
     <string name="copy_code">Copy the code and open GitHub</string>
+    <string name="code_hint">Type the code on GitHub: pasting it may only fill the first box.</string>
     <string name="waiting_github">Waiting for GitHub…</string>
     <string name="signed_in_as">Signed in as %1$s</string>
     <string name="create_text">The app creates the repository %1$s for your page. It is public: the page shows on a map where you did banners.</string>

@@ -1,8 +1,18 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
 }
+
+val localProperties = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+}
+
+/** From local.properties, else a Gradle property (-Prelease.storeFile=… in the release workflow). */
+fun localProperty(name: String, default: String = ""): String =
+    localProperties.getProperty(name) ?: providers.gradleProperty(name).orNull ?: default
 
 android {
     namespace = "dev.elkuku.kmybanners"
@@ -22,11 +32,29 @@ android {
         )
     }
 
+    signingConfigs {
+        // The release key (release.* in local.properties or from the workflow); without it assembleRelease is unsigned
+        if (localProperty("release.storeFile").isNotBlank()) {
+            create("release") {
+                storeFile = file(localProperty("release.storeFile"))
+                storePassword = localProperty("release.storePassword")
+                keyAlias = localProperty("release.keyAlias")
+                keyPassword = localProperty("release.keyPassword")
+            }
+        }
+    }
+
     buildTypes {
+        debug {
+            // Installs next to the release app
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.findByName("release")
         }
     }
 

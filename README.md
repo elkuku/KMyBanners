@@ -12,6 +12,19 @@ Ingress, matched with [Bannergress](https://bannergress.com), with a map of wher
    screenshots, matches the medals with the done list and publishes the page at
    `https://<you>.github.io/ingress-banners/`.
 
+## Download
+
+Beta versions: the APK of the [latest release](https://github.com/elkuku/KMyBanners/releases) (Android 8.0 or
+newer). Open it on your phone and allow installing apps from your browser when Android asks.
+
+## Release
+
+Set `versionName` (and `versionCode`) in `app/build.gradle.kts`, then push a tag `v<versionName>`: the
+release workflow builds the APK, signs it with the release key (repo secrets `RELEASE_KEYSTORE_BASE64`,
+`RELEASE_KEYSTORE_PASSWORD`) and publishes it as a GitHub Release. Locally, `release.*` in `local.properties`
+signs `assembleRelease`; the debug build (`dev.elkuku.kmybanners.debug`, "KMyBanners Debug") installs next
+to it.
+
 ## Build
 
 ```sh

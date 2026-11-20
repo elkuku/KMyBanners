@@ -74,6 +74,7 @@ private fun SignIn(s: UiState, vm: MainViewModel) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(stringResource(R.string.enter_code))
                 Text(code.userCode, fontFamily = FontFamily.Monospace, fontSize = 32.sp, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.code_hint), style = MaterialTheme.typography.bodySmall)
                 Button(onClick = {
                     clipboard.setText(AnnotatedString(code.userCode))
                     uri.openUri(code.verificationUri)
