@@ -36,6 +36,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.text.SimpleDateFormat
@@ -73,7 +74,8 @@ data class UiState(
     val error: UiError? = null,
     val bannergress: Boolean = false,            // signed in to Bannergress
     val bannergressLogin: BannergressLogin? = null, // the WebView sign-in while it is open
-    val doneUploaded: Int? = null,               // banners in the done list just uploaded
+    val doneUploaded: Int? = null,               // banners in the done list (on the page, or just uploaded)
+    val doneSyncedAt: String? = null,            // when the done list was uploaded (config.json)
     val banners: List<PageBanner> = emptyList(),   // the page's medal row groups (banners.json)
     val reviewList: List<PageBanner> = emptyList(),// what the review screen goes through
     val reviewing: Int? = null,                    // the entry on the review screen (index into reviewList)
@@ -115,20 +117,28 @@ class MainViewModel(
         val login = account.login ?: api.user().login.also { account.login = it }
         // Set up when the repo exists, was made from the template and config.json has the agent name
         // (else "Create my page" finishes it)
-        val repo = api.repo(login, REPO)?.takeIf { it.fromTemplate && agentName(login, REPO).isNotBlank() }
+        val config = readConfig(login)
+        val agent = config["agent"]?.jsonPrimitive?.content.orEmpty()
+        val repo = api.repo(login, REPO)?.takeIf { it.fromTemplate && agent.isNotBlank() }
         val pages = repo?.let { api.pages(login, REPO) }
+        // The done list on the page: how many banners, uploaded when (for the front page)
+        val doneCount = repo?.let {
+            api.file(login, REPO, "done.json")?.decodeToString()
+                ?.let { runCatching { json.parseToJsonElement(it).jsonArray.size }.getOrNull() }
+        }
         _state.update {
             it.copy(loading = false, signedIn = true, login = login, repo = repo?.fullName, pageUrl = pages?.htmlUrl,
-                bannergress = bgAuth.signedIn)
+                bannergress = bgAuth.signedIn, doneUploaded = doneCount,
+                doneSyncedAt = config["doneSyncedAt"]?.jsonPrimitive?.content)
         }
         loadToCheck()
         checkBuild()
     }
 
-    private suspend fun agentName(owner: String, name: String): String =
-        api.file(owner, name, "config.json")?.decodeToString()
-            ?.let { runCatching { json.parseToJsonElement(it).jsonObject["agent"]?.jsonPrimitive?.content }.getOrNull() }
-            .orEmpty()
+    /** The page repo's config.json (empty when there is none yet). */
+    private suspend fun readConfig(owner: String): JsonObject =
+        api.file(owner, REPO, "config.json")?.decodeToString()
+            ?.let { runCatching { json.parseToJsonElement(it).jsonObject }.getOrNull() } ?: JsonObject(emptyMap())
 
     fun signIn() {
         signIn?.cancel()
@@ -308,7 +318,7 @@ class MainViewModel(
             RepoFile("done.json", json.encodeToString(done).toByteArray()),
             RepoFile("config.json", (prettyJson.encodeToString(JsonObject.serializer(), newConfig) + "\n").toByteArray()),
         ), "Update the done list (${done.size} banners)")
-        _state.update { it.copy(doneUploaded = done.size, build = Build("queued")) }
+        _state.update { it.copy(doneUploaded = done.size, doneSyncedAt = synced, build = Build("queued")) }
         follow(login, sha)
     }
 

@@ -15,7 +15,6 @@
     <string name="agent_name">Agentenname</string>
     <string name="create_page">Meine Seite anlegen</string>
     <string name="your_page">Deine Seite</string>
-    <string name="building">Wird erstellt…</string>
     <string name="not_published">Noch nicht veröffentlicht: Teile deine Screenshots der Missionsmedaillen.</string>
     <string name="build_again">Seite neu erstellen</string>
     <string name="uploading">Lade Screenshot %1$d von %2$d hoch…</string>
@@ -31,11 +30,9 @@
     <string name="build_running">Deine Seite wird erstellt (%1$s)…</string>
     <string name="build_queued">in der Warteschlange</string>
     <string name="build_in_progress">läuft</string>
-    <string name="build_ok">Deine Seite ist aktuell.</string>
     <string name="build_failed">Das Erstellen ist fehlgeschlagen (%1$s).</string>
     <string name="show_build">Auf GitHub ansehen</string>
     <string name="try_again">Nochmal versuchen</string>
-    <string name="howto_title">Füge deine Missionsmedaillen hinzu</string>
     <string name="howto_1">1. Öffne in Ingress dein Agentenprofil, scrolle zu den Missionsmedaillen und tippe auf den Pfeil daneben.</string>
     <string name="howto_2">2. Mach einen Screenshot, scrolle etwa eine halbe Bildschirmhöhe weiter, warte, bis die Bilder geladen sind, und mach den nächsten – bis ans Ende der Liste.</string>
     <string name="howto_3">3. Wähle die Screenshots in deiner Galerie aus und teile sie mit KMyBanners.</string>
@@ -95,16 +92,32 @@
         <item quantity="one">%d speichern</item>
         <item quantity="other">%d speichern</item>
     </plurals>
-    <plurals name="done_uploaded">
-        <item quantity="one">%d Banner hochgeladen.</item>
-        <item quantity="other">%d Banner hochgeladen.</item>
-    </plurals>
     <plurals name="missions">
-        <item quantity="one">%d Mission</item>
-        <item quantity="other">%d Missionen</item>
+        <item quantity="one">%s Mission</item>
+        <item quantity="other">%s Missionen</item>
     </plurals>
     <plurals name="error_shots_unreadable">
         <item quantity="one">%d Screenshot konnte nicht gelesen werden.</item>
         <item quantity="other">%d Screenshots konnten nicht gelesen werden.</item>
+    </plurals>
+    <string name="open_page">Meine Seite öffnen</string>
+    <string name="to_check_count">%1$s zu prüfen</string>
+    <string name="done_on">hochgeladen am %1$s</string>
+    <string name="done_not_yet">Noch nicht hochgeladen. Die Seite findet damit deine Banner.</string>
+    <string name="upload_done_again">Neu hochladen</string>
+    <string name="why">Wozu?</string>
+    <string name="less">Weniger</string>
+    <string name="shots_title">Deine Missionsmedaillen</string>
+    <string name="shots_none">Noch nicht auf deiner Seite: Mach in Ingress Screenshots deiner Missionsmedaillen und teile sie mit KMyBanners.</string>
+    <string name="shots_update">Neue Medaillen? Teile neue Screenshots der ganzen Liste.</string>
+    <string name="howto_show">So machst du die Screenshots</string>
+    <string name="check_none">Alle Medaillenreihen sind zugeordnet.</string>
+    <plurals name="banners_count">
+        <item quantity="one">%s Banner</item>
+        <item quantity="other">%s Banner</item>
+    </plurals>
+    <plurals name="shots_status">
+        <item quantity="one">%s Medaillenreihe auf deiner Seite.</item>
+        <item quantity="other">%s Medaillenreihen auf deiner Seite.</item>
     </plurals>
 </resources>

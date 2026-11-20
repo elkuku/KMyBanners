@@ -2,6 +2,13 @@ package dev.elkuku.kmybanners.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Surface
+import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -112,119 +119,172 @@ private fun CreatePage(s: UiState, vm: MainViewModel) {
 
 @Composable
 private fun Page(s: UiState, vm: MainViewModel) {
-    val uri = LocalUriHandler.current
-    Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(stringResource(R.string.your_page), style = MaterialTheme.typography.titleMedium)
-            val url = s.pageUrl
-            if (url != null && (s.build == null || s.build.done)) {
-                TextButton(onClick = { uri.openUri(url) }) { Text(url) }
-            } else if (s.build != null) {
-                Text(stringResource(R.string.building))
-            } else {
-                Text(stringResource(R.string.not_published))
-            }
-            TextButton(onClick = { uri.openUri("https://github.com/${s.repo}") }) { Text("github.com/${s.repo}") }
-            if (s.build?.done != false && s.pageUrl != null) {
-                TextButton(onClick = vm::buildAgain, enabled = !s.busy) { Text(stringResource(R.string.build_again)) }
-            }
-            if (s.banners.isNotEmpty()) {
-                TextButton(onClick = vm::openMyBanners) { Text(stringResource(R.string.my_banners)) }
-            }
-        }
-    }
+    PageCard(s, vm)
     when {
-        s.uploaded != null -> Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(stringResource(R.string.uploading, s.uploaded, s.shots.size))
-            LinearProgressIndicator({ s.uploaded / s.shots.size.coerceAtLeast(1).toFloat() }, Modifier.fillMaxWidth())
-        }
-        s.shots.isNotEmpty() -> Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(pluralStringResource(R.plurals.shots_shared, s.shots.size, s.shots.size) + ", " +
-                stringResource(R.string.shots_range, s.shots.first().name, s.shots.last().name))
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Button(onClick = vm::upload, enabled = !s.busy) { Text(stringResource(R.string.upload_build)) }
-                OutlinedButton(onClick = vm::clearShots) { Text(stringResource(R.string.discard)) }
+        // Screenshots shared from the gallery: upload them first
+        s.uploaded != null -> Card(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.uploading, s.uploaded, s.shots.size))
+                LinearProgressIndicator({ s.uploaded / s.shots.size.coerceAtLeast(1).toFloat() }, Modifier.fillMaxWidth())
             }
         }
-        s.build != null -> BuildCard(s.build, uri::openUri, vm::buildAgain)
-        else -> HowTo()
-    }
-    if (s.uploaded == null && s.shots.isEmpty()) {
-        if (s.toCheck.isNotEmpty() || s.decisions.isNotEmpty()) ToCheck(s, vm)
-        DoneList(s, vm)
+        s.shots.isNotEmpty() -> Card(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(pluralStringResource(R.plurals.shots_shared, s.shots.size, s.shots.size),
+                    style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.shots_range, s.shots.first().name, s.shots.last().name),
+                    style = MaterialTheme.typography.bodySmall)
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Button(onClick = vm::upload, enabled = !s.busy) { Text(stringResource(R.string.upload_build)) }
+                    OutlinedButton(onClick = vm::clearShots) { Text(stringResource(R.string.discard)) }
+                }
+            }
+        }
+        else -> {
+            DoneStep(s, vm)
+            ShotsStep(s)
+            CheckStep(s, vm)
+        }
     }
     s.bannergressLogin?.let { BannergressLoginDialog(it, vm::bannergressCode, vm::bannergressCancel) }
     MyBannersDialog(s, vm)
     ReviewDialog(s, vm)
 }
 
-/** The medal rows the build could not match for sure, and the agent's decisions not saved yet. */
+/** The page: open it, its numbers, the build; the less frequent actions as links below. */
 @Composable
-private fun ToCheck(s: UiState, vm: MainViewModel) {
-    Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(stringResource(R.string.check_title), style = MaterialTheme.typography.titleMedium)
-            if (s.toCheck.isNotEmpty()) Text(pluralStringResource(R.plurals.check_text, s.toCheck.size, s.toCheck.size))
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (s.toCheck.isNotEmpty()) {
-                    Button(onClick = vm::startReview, enabled = !s.busy) { Text(stringResource(R.string.check_them)) }
+private fun PageCard(s: UiState, vm: MainViewModel) {
+    val uri = LocalUriHandler.current
+    val b = s.build
+    Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text(stringResource(R.string.your_page), style = MaterialTheme.typography.titleLarge)
+            val banners = s.banners.count { it.status == "match" && !it.single }
+            if (s.banners.isNotEmpty()) {
+                Text(
+                    listOf(pluralStringResource(R.plurals.banners_count, banners, number(banners)),
+                        s.banners.sumOf { it.count }.let { pluralStringResource(R.plurals.missions, it, number(it)) },
+                        stringResource(R.string.to_check_count, number(s.toCheck.size))).joinToString(" · "),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
+            when {
+                b != null && !b.done -> {
+                    Text(stringResource(R.string.build_running,
+                        stringResource(if (b.status == "queued") R.string.build_queued else R.string.build_in_progress)))
+                    LinearProgressIndicator(Modifier.fillMaxWidth())
                 }
-                if (s.decisions.isNotEmpty()) {
-                    Button(onClick = vm::saveDecisions, enabled = !s.busy && s.build?.done != false) {
-                        Text(pluralStringResource(R.plurals.save_decisions, s.decisions.size, s.decisions.size))
-                    }
+                b != null && b.conclusion != "success" -> {
+                    Text(stringResource(R.string.build_failed, b.conclusion.orEmpty()), color = MaterialTheme.colorScheme.error)
+                    Button(onClick = vm::buildAgain, enabled = !s.busy) { Text(stringResource(R.string.try_again)) }
                 }
+                s.pageUrl == null -> Text(stringResource(R.string.not_published))
+                else -> Button(onClick = { uri.openUri(s.pageUrl) }, Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.open_page))
+                }
+            }
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                if (s.banners.isNotEmpty()) TextButton(onClick = vm::openMyBanners) { Text(stringResource(R.string.my_banners)) }
+                if (b?.done != false && s.pageUrl != null) {
+                    TextButton(onClick = vm::buildAgain, enabled = !s.busy) { Text(stringResource(R.string.build_again)) }
+                }
+                b?.url?.let { TextButton(onClick = { uri.openUri(it) }) { Text(stringResource(R.string.show_build)) } }
+                TextButton(onClick = { uri.openUri("https://github.com/${s.repo}") }) { Text("GitHub") }
             }
         }
     }
 }
 
-/** The Bannergress done list: the page matches the medals with its banner pictures. */
+/** A numbered step: its title, whether it is done, a line about its state, and its action. */
 @Composable
-private fun DoneList(s: UiState, vm: MainViewModel) {
+private fun Step(number: Int, title: String, done: Boolean, status: String, content: @Composable () -> Unit = {}) {
     Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(stringResource(R.string.done_title), style = MaterialTheme.typography.titleMedium)
-            Text(stringResource(R.string.done_text))
-            if (!s.bannergress) {
-                Button(onClick = vm::bannergressSignIn, enabled = !s.busy) { Text(stringResource(R.string.sign_in_bannergress)) }
-            } else {
-                Button(onClick = vm::uploadDoneList, enabled = !s.busy && s.build?.done != false) {
-                    Text(stringResource(R.string.upload_done))
+        Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            Surface(
+                shape = CircleShape,
+                color = if (done) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = if (done) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(32.dp),
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Text(if (done) "✓" else "$number", style = MaterialTheme.typography.titleMedium)
                 }
-                s.doneUploaded?.let { Text(pluralStringResource(R.plurals.done_uploaded, it, it), style = MaterialTheme.typography.bodySmall) }
+            }
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(title, style = MaterialTheme.typography.titleMedium)
+                Text(status, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                content()
             }
         }
     }
 }
 
+/** ① The Bannergress done list: the page matches the medals with its banners' pictures. */
 @Composable
-private fun BuildCard(b: Build, open: (String) -> Unit, again: () -> Unit) {
-    Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(
-                when {
-                    !b.done -> stringResource(R.string.build_running,
-                        stringResource(if (b.status == "queued") R.string.build_queued else R.string.build_in_progress))
-                    b.conclusion == "success" -> stringResource(R.string.build_ok)
-                    else -> stringResource(R.string.build_failed, b.conclusion.orEmpty())
-                },
-            )
-            if (!b.done) LinearProgressIndicator(Modifier.fillMaxWidth())
-            b.url?.let { TextButton(onClick = { open(it) }) { Text(stringResource(R.string.show_build)) } }
-            if (b.done && b.conclusion != "success") Button(onClick = again) { Text(stringResource(R.string.try_again)) }
+private fun DoneStep(s: UiState, vm: MainViewModel) {
+    val done = s.doneUploaded != null
+    var info by rememberSaveable { mutableStateOf(false) }
+    Step(1, stringResource(R.string.done_title), done,
+        if (done) listOfNotNull(pluralStringResource(R.plurals.banners_count, s.doneUploaded!!, number(s.doneUploaded)),
+            s.doneSyncedAt?.take(10)?.let { stringResource(R.string.done_on, it) }).joinToString(" · ")
+        else stringResource(R.string.done_not_yet)) {
+        if (done) {
+            // Done: upload again (signing in to Bannergress first when needed)
+            OutlinedButton(onClick = { if (s.bannergress) vm.uploadDoneList() else vm.bannergressSignIn() },
+                enabled = !s.busy && s.build?.done != false) {
+                Text(stringResource(R.string.upload_done_again))
+            }
+        } else if (!s.bannergress) {
+            Button(onClick = vm::bannergressSignIn, enabled = !s.busy) { Text(stringResource(R.string.sign_in_bannergress)) }
+        } else {
+            Button(onClick = vm::uploadDoneList, enabled = !s.busy && s.build?.done != false) {
+                Text(stringResource(R.string.upload_done))
+            }
+        }
+        TextButton(onClick = { info = !info }, contentPadding = PaddingValues(0.dp)) {
+            Text(stringResource(if (info) R.string.less else R.string.why))
+        }
+        if (info) Text(stringResource(R.string.done_text), style = MaterialTheme.typography.bodySmall)
+    }
+}
+
+/** ② The mission medal screenshots, shared from the gallery. */
+@Composable
+private fun ShotsStep(s: UiState) {
+    val rows = s.banners.sumOf { e -> e.rows.split(',').sumOf { r -> r.split('-').let { (it.last().toInt() - it.first().toInt()) + 1 } } }
+    // Open until the page has screenshots, unless the agent opened or closed it
+    var toggled by rememberSaveable { mutableStateOf<Boolean?>(null) }
+    val howto = toggled ?: s.banners.isEmpty()
+    Step(2, stringResource(R.string.shots_title), s.banners.isNotEmpty(),
+        if (s.banners.isNotEmpty()) pluralStringResource(R.plurals.shots_status, rows, number(rows)) + " " + stringResource(R.string.shots_update)
+        else stringResource(R.string.shots_none)) {
+        TextButton(onClick = { toggled = !howto }, contentPadding = PaddingValues(0.dp)) {
+            Text(stringResource(if (howto) R.string.less else R.string.howto_show))
+        }
+        if (howto) {
+            Text(stringResource(R.string.howto_1), style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(R.string.howto_2), style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(R.string.howto_3), style = MaterialTheme.typography.bodySmall)
         }
     }
 }
 
+/** ③ The medal rows the build could not match for sure, and the decisions not saved yet. */
 @Composable
-private fun HowTo() {
-    Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(stringResource(R.string.howto_title), style = MaterialTheme.typography.titleMedium)
-            Text(stringResource(R.string.howto_1))
-            Text(stringResource(R.string.howto_2))
-            Text(stringResource(R.string.howto_3))
+private fun CheckStep(s: UiState, vm: MainViewModel) {
+    if (s.banners.isEmpty()) return
+    Step(3, stringResource(R.string.check_title), s.toCheck.isEmpty() && s.decisions.isEmpty(),
+        if (s.toCheck.isEmpty()) stringResource(R.string.check_none)
+        else pluralStringResource(R.plurals.check_text, s.toCheck.size, s.toCheck.size)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            if (s.toCheck.isNotEmpty()) {
+                Button(onClick = vm::startReview, enabled = !s.busy) { Text(stringResource(R.string.check_them)) }
+            }
+            if (s.decisions.isNotEmpty()) {
+                Button(onClick = vm::saveDecisions, enabled = !s.busy && s.build?.done != false) {
+                    Text(pluralStringResource(R.plurals.save_decisions, s.decisions.size, s.decisions.size))
+                }
+            }
         }
     }
 }
@@ -246,3 +306,6 @@ private fun errorText(e: UiError): String = if (e.plural != 0) {
 } else {
     stringResource(e.res, *e.args.toTypedArray())
 }
+
+/** A count with the language's thousands separator (2,465 / 2.465). */
+private fun number(n: Int): String = java.text.NumberFormat.getIntegerInstance().format(n)

@@ -15,7 +15,6 @@
     <string name="agent_name">Nombre de agente</string>
     <string name="create_page">Crear mi página</string>
     <string name="your_page">Tu página</string>
-    <string name="building">Creándose…</string>
     <string name="not_published">Aún no publicada: comparte tus capturas de las medallas de misión.</string>
     <string name="build_again">Volver a crear mi página</string>
     <string name="uploading">Subiendo captura %1$d de %2$d…</string>
@@ -31,11 +30,9 @@
     <string name="build_running">Creando tu página (%1$s)…</string>
     <string name="build_queued">en cola</string>
     <string name="build_in_progress">en curso</string>
-    <string name="build_ok">Tu página está al día.</string>
     <string name="build_failed">La creación falló (%1$s).</string>
     <string name="show_build">Ver en GitHub</string>
     <string name="try_again">Reintentar</string>
-    <string name="howto_title">Añade tus medallas de misión</string>
     <string name="howto_1">1. En Ingress, abre tu perfil de agente, desplázate hasta las medallas de misión y toca la flecha junto a ellas.</string>
     <string name="howto_2">2. Haz una captura, desplázate media pantalla, espera a que carguen las imágenes y haz la siguiente, hasta el final de la lista.</string>
     <string name="howto_3">3. Selecciona las capturas en tu galería y compártelas con KMyBanners.</string>
@@ -98,19 +95,36 @@
         <item quantity="other">Guardar %d</item>
         <item quantity="many">Guardar %d</item>
     </plurals>
-    <plurals name="done_uploaded">
-        <item quantity="one">%d banner subido.</item>
-        <item quantity="other">%d banners subidos.</item>
-        <item quantity="many">%d banners subidos.</item>
-    </plurals>
     <plurals name="missions">
-        <item quantity="one">%d misión</item>
-        <item quantity="other">%d misiones</item>
-        <item quantity="many">%d misiones</item>
+        <item quantity="one">%s misión</item>
+        <item quantity="other">%s misiones</item>
+        <item quantity="many">%s misiones</item>
     </plurals>
     <plurals name="error_shots_unreadable">
         <item quantity="one">No se pudo leer %d captura.</item>
         <item quantity="other">No se pudieron leer %d capturas.</item>
         <item quantity="many">No se pudieron leer %d capturas.</item>
+    </plurals>
+    <string name="open_page">Abrir mi página</string>
+    <string name="to_check_count">%1$s por revisar</string>
+    <string name="done_on">subida el %1$s</string>
+    <string name="done_not_yet">Aún no subida. La página la usa para encontrar tus banners.</string>
+    <string name="upload_done_again">Volver a subir</string>
+    <string name="why">¿Para qué?</string>
+    <string name="less">Menos</string>
+    <string name="shots_title">Tus medallas de misión</string>
+    <string name="shots_none">Aún no están en tu página: haz capturas de tus medallas de misión en Ingress y compártelas con KMyBanners.</string>
+    <string name="shots_update">¿Medallas nuevas? Comparte capturas nuevas de toda la lista.</string>
+    <string name="howto_show">Cómo hacer las capturas</string>
+    <string name="check_none">Todas las filas de medallas están asignadas.</string>
+    <plurals name="banners_count">
+        <item quantity="one">%s banner</item>
+        <item quantity="many">%s banners</item>
+        <item quantity="other">%s banners</item>
+    </plurals>
+    <plurals name="shots_status">
+        <item quantity="one">%s fila de medallas en tu página.</item>
+        <item quantity="many">%s filas de medallas en tu página.</item>
+        <item quantity="other">%s filas de medallas en tu página.</item>
     </plurals>
 </resources>

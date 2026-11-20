@@ -17,7 +17,6 @@
     <string name="agent_name">Agent name</string>
     <string name="create_page">Create my page</string>
     <string name="your_page">Your page</string>
-    <string name="building">Building…</string>
     <string name="not_published">Not published yet: share your mission medal screenshots.</string>
     <string name="build_again">Build my page again</string>
     <string name="uploading">Uploading screenshot %1$d of %2$d…</string>
@@ -33,11 +32,9 @@
     <string name="build_running">Building your page (%1$s)…</string>
     <string name="build_queued">queued</string>
     <string name="build_in_progress">in progress</string>
-    <string name="build_ok">Your page is up to date.</string>
     <string name="build_failed">The build failed (%1$s).</string>
     <string name="show_build">Show the build on GitHub</string>
     <string name="try_again">Try again</string>
-    <string name="howto_title">Add your mission medals</string>
     <string name="howto_1">1. In Ingress, open your agent profile, scroll to the mission medals and tap the arrow next to them.</string>
     <string name="howto_2">2. Take a screenshot, scroll about half a screen, wait until the pictures have loaded, take the next one — down to the end of the list.</string>
     <string name="howto_3">3. Select the screenshots in your gallery and share them with KMyBanners.</string>
@@ -97,16 +94,32 @@
         <item quantity="one">Save %d</item>
         <item quantity="other">Save %d</item>
     </plurals>
-    <plurals name="done_uploaded">
-        <item quantity="one">%d banner uploaded.</item>
-        <item quantity="other">%d banners uploaded.</item>
-    </plurals>
     <plurals name="missions">
-        <item quantity="one">%d mission</item>
-        <item quantity="other">%d missions</item>
+        <item quantity="one">%s mission</item>
+        <item quantity="other">%s missions</item>
     </plurals>
     <plurals name="error_shots_unreadable">
         <item quantity="one">%d screenshot could not be read.</item>
         <item quantity="other">%d screenshots could not be read.</item>
+    </plurals>
+    <string name="open_page">Open my page</string>
+    <string name="to_check_count">%1$s to check</string>
+    <string name="done_on">uploaded on %1$s</string>
+    <string name="done_not_yet">Not uploaded yet. The page uses it to find your banners.</string>
+    <string name="upload_done_again">Upload again</string>
+    <string name="why">Why?</string>
+    <string name="less">Less</string>
+    <string name="shots_title">Your mission medals</string>
+    <string name="shots_none">Not on your page yet: take screenshots of your mission medals in Ingress and share them with KMyBanners.</string>
+    <string name="shots_update">New medals? Share new screenshots of the whole list.</string>
+    <string name="howto_show">How to take the screenshots</string>
+    <string name="check_none">Every medal row is matched.</string>
+    <plurals name="banners_count">
+        <item quantity="one">%s banner</item>
+        <item quantity="other">%s banners</item>
+    </plurals>
+    <plurals name="shots_status">
+        <item quantity="one">%s medal row on your page.</item>
+        <item quantity="other">%s medal rows on your page.</item>
     </plurals>
 </resources>
