@@ -1,6 +1,16 @@
 package dev.elkuku.kmybanners.ui
 
 import androidx.compose.foundation.BorderStroke
+import io.ktor.http.encodeURLPathPart
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -88,7 +98,7 @@ fun ReviewDialog(s: UiState, vm: MainViewModel) {
                 Text(stringResource(R.string.review_these))
                 AsyncImage(model = s.pageUrl!!.trimEnd('/') + "/" + row.img, contentDescription = stringResource(R.string.review_medals),
                     modifier = Modifier.fillMaxWidth(), contentScale = ContentScale.FillWidth)
-                Text(stringResource(R.string.now_label, label(row)), style = MaterialTheme.typography.bodyMedium)
+                EntryInfo(row)
                 decided?.let {
                     Text(stringResource(R.string.changed_to, label(it)), color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.bodyMedium)
@@ -168,7 +178,30 @@ private fun OptionCard(o: BannerOption, chosen: Boolean, pick: () -> Unit) {
     }
 }
 
-/** Every medal row group of the page, to change any of them later. */
+/** What an entry is: its banner or what it is now, its medals and missions, place, length and event day. */
+@Composable
+private fun EntryInfo(e: PageBanner) {
+    val uri = LocalUriHandler.current
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Text(if (e.status == "review") stringResource(R.string.unassigned) else label(e),
+            style = MaterialTheme.typography.titleMedium,
+            color = if (e.status == "review") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface)
+        val counts = buildList {
+            add(pluralStringResource(R.plurals.medals, e.count, number(e.count)))
+            e.missions?.takeIf { e.id != null && it != e.count }?.let { add(pluralStringResource(R.plurals.missions, it, number(it))) }
+        }
+        Text(counts.joinToString(" · "), style = MaterialTheme.typography.bodyMedium)
+        listOfNotNull(e.addr, e.km?.let { "%.1f km".format(it) }, e.event?.distinct()?.joinToString(" – ")).takeIf { it.isNotEmpty() }?.let {
+            Text(it.joinToString(" · "), style = MaterialTheme.typography.bodyMedium)
+        }
+        e.id?.let { id ->
+            TextButton(onClick = { uri.openUri("https://bannergress.com/banner/${id.encodeURLPathPart()}") },
+                contentPadding = PaddingValues(0.dp)) { Text(stringResource(R.string.open_bannergress)) }
+        }
+    }
+}
+
+/** Every medal row group of the page as its medals, a dot on the ones not assigned yet; a tap opens it. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyBannersDialog(s: UiState, vm: MainViewModel) {
@@ -179,28 +212,20 @@ fun MyBannersDialog(s: UiState, vm: MainViewModel) {
                 TextButton(onClick = vm::closeMyBanners) { Text(stringResource(R.string.close)) }
             })
         }) { pad ->
-            Column(
-                Modifier.padding(pad).fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+            LazyColumn(
+                Modifier.padding(pad).fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                s.banners.forEach { e ->
-                    val decided = s.decisions[e.fp]?.second
-                    Card(Modifier.fillMaxWidth()) {
-                        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            AsyncImage(model = s.pageUrl!!.trimEnd('/') + "/" + e.img, contentDescription = label(e),
-                                modifier = Modifier.fillMaxWidth(), contentScale = ContentScale.FillWidth)
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Column(Modifier.weight(1f)) {
-                                    Text(label(e), style = MaterialTheme.typography.titleSmall,
-                                        color = if (e.status == "review") MaterialTheme.colorScheme.error
-                                        else MaterialTheme.colorScheme.onSurface)
-                                    decided?.let {
-                                        Text(stringResource(R.string.changed_to, label(it)),
-                                            color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.bodySmall)
-                                    }
-                                }
-                                TextButton(onClick = { vm.edit(e) }) { Text(stringResource(R.string.change)) }
-                            }
+                items(s.banners, key = { it.fp + it.rows }) { e ->
+                    // Not assigned: still to check, and nothing picked for it yet
+                    val open = e.status == "review" && s.decisions[e.fp] == null
+                    Box(Modifier.fillMaxWidth().clip(MaterialTheme.shapes.small).clickable { vm.edit(e) }) {
+                        AsyncImage(model = s.pageUrl!!.trimEnd('/') + "/" + e.img, contentDescription = label(e),
+                            modifier = Modifier.fillMaxWidth(), contentScale = ContentScale.FillWidth)
+                        if (open) {
+                            Box(Modifier.align(Alignment.TopEnd).padding(4.dp).size(12.dp)
+                                .background(MaterialTheme.colorScheme.error, CircleShape))
                         }
                     }
                 }

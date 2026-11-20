@@ -26,6 +26,9 @@ data class PageBanner(
     val name: String? = null,       // for status none: the name the agent gave it
     val single: Boolean = false,    // single missions, not a banner
     val missions: Int? = null,
+    val addr: String? = null,       // where the banner starts (matched banners)
+    val km: Double? = null,         // its length
+    val event: List<String>? = null, // the first and last day of its event (e.g. a Mission Day)
     val options: List<BannerOption> = emptyList(), // for review: the closest banners
 ) {
     val allFps: List<String> get() = fps.ifEmpty { listOf(fp) }

@@ -63,12 +63,10 @@
     <string name="check_link">Check</string>
     <string name="link_not_found">No banner with this link on Bannergress.</string>
     <string name="use_banner">Use this banner</string>
-    <string name="now_label">Now: %1$s</string>
     <string name="changed_to">Changed to: %1$s (not saved yet)</string>
     <string name="status_review">To check</string>
     <string name="status_none">Not on Bannergress: %1$s</string>
     <string name="my_banners">My banners</string>
-    <string name="change">Change</string>
     <string name="close">Close</string>
     <string name="nearby_label">Nearby, not on your done list</string>
     <string name="review_change_title">Change medal row</string>
@@ -123,4 +121,10 @@
         <item quantity="one">%s medal row on your page.</item>
         <item quantity="other">%s medal rows on your page.</item>
     </plurals>
+    <plurals name="medals">
+        <item quantity="one">%s medal</item>
+        <item quantity="other">%s medals</item>
+    </plurals>
+    <string name="open_bannergress">Open on Bannergress</string>
+    <string name="unassigned">Not assigned yet</string>
 </resources>

@@ -25,13 +25,15 @@ class ReviewTest {
         val http = httpClient(MockEngine { req ->
             assertEquals("/ingress-banners/banners.json", req.url.encodedPath)
             respond("""{"agent":"x","banners":[
-                {"i":0,"rows":"0-2","status":"match","img":"img/m000.jpg?v=1","fp":"A","count":18,"id":"b1"},
+                {"i":0,"rows":"0-2","status":"match","img":"img/m000.jpg?v=1","fp":"A","count":18,"id":"b1",
+                 "addr":"Prague, Czechia","km":12.1,"event":["2026-05-17","2026-05-17"],"ends":[9,8,7]},
                 {"i":1,"rows":"3","status":"review","img":"img/m001.jpg?v=2","fp":"B","count":6,
                  "options":[{"id":"b2","dist":0.12,"title":"MD","missions":24,"picture":"/bnrs/pictures/p"}]}]}""",
                 HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json"))
         })
         val all = pageBanners(http, "https://agent.github.io/ingress-banners/")!!
         assertEquals(2, all.size)
+        assertEquals(listOf("2026-05-17", "2026-05-17"), all[0].event)
         val rows = all.filter { it.status == "review" }
         assertEquals(1, rows.size)
         assertEquals("https://api.bannergress.com/bnrs/pictures/p", rows[0].options[0].pictureUrl)

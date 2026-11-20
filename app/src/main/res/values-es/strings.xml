@@ -61,12 +61,10 @@
     <string name="check_link">Comprobar</string>
     <string name="link_not_found">No hay ningún banner con este enlace en Bannergress.</string>
     <string name="use_banner">Usar este banner</string>
-    <string name="now_label">Ahora: %1$s</string>
     <string name="changed_to">Cambiado a: %1$s (sin guardar)</string>
     <string name="status_review">Por revisar</string>
     <string name="status_none">No está en Bannergress: %1$s</string>
     <string name="my_banners">Mis banners</string>
-    <string name="change">Cambiar</string>
     <string name="close">Cerrar</string>
     <string name="nearby_label">Cerca, no está en tu lista de completados</string>
     <string name="review_change_title">Cambiar fila de medallas</string>
@@ -128,4 +126,11 @@
         <item quantity="many">%s filas de medallas en tu página.</item>
         <item quantity="other">%s filas de medallas en tu página.</item>
     </plurals>
+    <plurals name="medals">
+        <item quantity="one">%s medalla</item>
+        <item quantity="other">%s medallas</item>
+        <item quantity="many">%s medallas</item>
+    </plurals>
+    <string name="open_bannergress">Abrir en Bannergress</string>
+    <string name="unassigned">Aún sin asignar</string>
 </resources>

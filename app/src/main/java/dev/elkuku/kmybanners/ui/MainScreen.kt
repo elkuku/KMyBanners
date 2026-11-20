@@ -311,4 +311,4 @@ private fun errorText(e: UiError): String = if (e.plural != 0) {
 }
 
 /** A count with the language's thousands separator (2,465 / 2.465). */
-private fun number(n: Int): String = java.text.NumberFormat.getIntegerInstance().format(n)
+internal fun number(n: Int): String = java.text.NumberFormat.getIntegerInstance().format(n)
