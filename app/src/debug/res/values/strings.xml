@@ -1,4 +1,4 @@
 <resources>
-    <!-- The debug build installs next to the release app: tell them apart in the launcher -->
-    <string name="app_name" translatable="false">KMyBanners Debug</string>
+    <!-- The dev build installs next to the release app: tell them apart in the launcher -->
+    <string name="app_name" translatable="false">KMyBanners Dev</string>
 </resources>

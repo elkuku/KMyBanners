@@ -25,7 +25,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import dev.elkuku.kmybanners.AppTheme
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.pluralStringResource
@@ -39,12 +42,19 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(s: UiState, vm: MainViewModel) {
+fun MainScreen(s: UiState, vm: MainViewModel, theme: AppTheme, onTheme: (AppTheme) -> Unit) {
+    var settings by rememberSaveable { mutableStateOf(false) }
     Scaffold(topBar = {
-        TopAppBar(title = { Text(stringResource(R.string.app_name)) }, actions = {
-            if (s.signedIn) TextButton(onClick = vm::signOut) { Text(stringResource(R.string.sign_out)) }
+        TopAppBar(title = {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.app_name))
+                if (isDev) DevBadge()
+            }
+        }, actions = {
+            TextButton(onClick = { settings = true }) { Text(stringResource(R.string.settings)) }
         })
     }) { pad ->
+        if (settings) SettingsDialog(s, vm, theme, onTheme) { settings = false }
         Column(
             Modifier.padding(pad).fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),

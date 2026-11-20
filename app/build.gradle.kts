@@ -22,8 +22,8 @@ android {
         applicationId = "dev.elkuku.kmybanners"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
 
         // The GitHub OAuth App (device flow, no client secret): its client id is public
         buildConfigField(
@@ -46,9 +46,10 @@ android {
 
     buildTypes {
         debug {
-            // Installs next to the release app
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = "-debug"
+            // The dev build ("KMyBanners Dev"): installs next to the release app, marked DEV, with the
+            // language and light/dark switches in its settings
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
         }
         release {
             isMinifyEnabled = true
@@ -71,6 +72,13 @@ android {
     // English, German, Spanish for Android 13+'s per-app language setting (res/resources.properties: English is the default)
     androidResources {
         generateLocaleConfig = true
+    }
+
+    // An app bundle keeps every language: the dev build switches them itself
+    bundle {
+        language {
+            enableSplit = false
+        }
     }
 
     testOptions {

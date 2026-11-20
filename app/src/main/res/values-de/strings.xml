@@ -72,6 +72,17 @@
     <string name="close">Schließen</string>
     <string name="nearby_label">In der Nähe, nicht auf deiner Erledigt-Liste</string>
     <string name="review_change_title">Medaillenreihe ändern</string>
+    <string name="settings">Einstellungen</string>
+    <string name="version">Version</string>
+    <string name="build_dev">Dev-Version: die neuesten Änderungen, neben der normalen App</string>
+    <string name="build_release">Release</string>
+    <string name="github_account">GitHub-Konto</string>
+    <string name="language">Sprache</string>
+    <string name="language_system">Sprache des Handys</string>
+    <string name="theme">Darstellung</string>
+    <string name="theme_system">Wie das Handy</string>
+    <string name="theme_light">Hell</string>
+    <string name="theme_dark">Dunkel</string>
     <plurals name="shots_shared">
         <item quantity="one">%d Screenshot</item>
         <item quantity="other">%d Screenshots</item>

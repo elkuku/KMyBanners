@@ -72,6 +72,17 @@
     <string name="close">Cerrar</string>
     <string name="nearby_label">Cerca, no está en tu lista de completados</string>
     <string name="review_change_title">Cambiar fila de medallas</string>
+    <string name="settings">Ajustes</string>
+    <string name="version">Versión</string>
+    <string name="build_dev">Versión de desarrollo: los últimos cambios, junto a la app normal</string>
+    <string name="build_release">Versión publicada</string>
+    <string name="github_account">Cuenta de GitHub</string>
+    <string name="language">Idioma</string>
+    <string name="language_system">Idioma del teléfono</string>
+    <string name="theme">Apariencia</string>
+    <string name="theme_system">Como el teléfono</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
     <plurals name="shots_shared">
         <item quantity="one">%d captura</item>
         <item quantity="other">%d capturas</item>

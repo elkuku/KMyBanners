@@ -22,8 +22,8 @@ newer). Open it on your phone and allow installing apps from your browser when A
 Set `versionName` (and `versionCode`) in `app/build.gradle.kts`, then push a tag `v<versionName>`: the
 release workflow builds the APK, signs it with the release key (repo secrets `RELEASE_KEYSTORE_BASE64`,
 `RELEASE_KEYSTORE_PASSWORD`) and publishes it as a GitHub Release. Locally, `release.*` in `local.properties`
-signs `assembleRelease`; the debug build (`dev.elkuku.kmybanners.debug`, "KMyBanners Debug") installs next
-to it.
+signs `assembleRelease`; the dev build (debug; `dev.elkuku.kmybanners.dev`, "KMyBanners Dev", marked DEV, with a language and a
+light/dark switch in its settings) installs next to it.
 
 ## Build
 

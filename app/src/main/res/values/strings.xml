@@ -74,6 +74,17 @@
     <string name="close">Close</string>
     <string name="nearby_label">Nearby, not on your done list</string>
     <string name="review_change_title">Change medal row</string>
+    <string name="settings">Settings</string>
+    <string name="version">Version</string>
+    <string name="build_dev">Dev build: the latest changes, next to the release app</string>
+    <string name="build_release">Release</string>
+    <string name="github_account">GitHub account</string>
+    <string name="language">Language</string>
+    <string name="language_system">Phone\'s language</string>
+    <string name="theme">Appearance</string>
+    <string name="theme_system">Like the phone</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
     <plurals name="shots_shared">
         <item quantity="one">%d screenshot</item>
         <item quantity="other">%d screenshots</item>
