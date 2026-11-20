@@ -16,12 +16,15 @@ fun localProperty(name: String, default: String = ""): String =
 
 android {
     namespace = "dev.elkuku.kmybanners"
-    compileSdk = 37
+    // 37.2: the Compose libraries need at least 37.1 (targetSdk below is the behaviour the app opts in to)
+    compileSdk {
+        version = release(37) { minorApiLevel = 2 }
+    }
 
     defaultConfig {
         applicationId = "dev.elkuku.kmybanners"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 2
         versionName = "0.2.0"
 
