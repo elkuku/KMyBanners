@@ -1,13 +1,15 @@
-# The dev app ("KMyBanners Dev", dev.elkuku.kmybanners.dev, next to the release app) on GitHub Pages:
-# https://elkuku.github.io/KMyBanners/kmybanners-dev.apk, built on every push to main that changes the app.
-# Signed with the dev key from the secrets DEV_KEYSTORE_BASE64 and DEV_KEYSTORE_PASSWORD.
-name: Dev build
+# The docs (VitePress, docs/) and the dev app ("KMyBanners Dev", dev.elkuku.kmybanners.dev, next to the
+# release app) on GitHub Pages: https://elkuku.github.io/KMyBanners/ and …/kmybanners-dev.apk, built on every
+# push to main that changes the app or the docs. Signed with the dev key from the secrets DEV_KEYSTORE_BASE64
+# and DEV_KEYSTORE_PASSWORD.
+name: Dev build and docs
 
 on:
   push:
     branches: [main]
     paths:
       - 'app/**'
+      - 'docs/**'
       - 'gradle/**'
       - '*.gradle.kts'
       - '.github/workflows/dev-build.yml'
@@ -49,34 +51,31 @@ jobs:
           "$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)/apksigner" verify \
             app/build/outputs/apk/dev/app-dev.apk
 
-      # Until there are docs: a page with the download link
-      - name: The page
+      - name: The dev APK's version
         run: |
           version=$(jq -r '.elements[0].versionName' app/build/outputs/apk/dev/output-metadata.json)
-          size=$(du -k app/build/outputs/apk/dev/app-dev.apk | awk '{printf "%.1f MB", $1/1024}')
-          mkdir site
-          cp app/build/outputs/apk/dev/app-dev.apk site/kmybanners-dev.apk
-          cat > site/index.html <<EOF
-          <!doctype html>
-          <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-          <title>KMyBanners</title>
-          <style>body{font-family:system-ui,sans-serif;max-width:40rem;margin:2rem auto;padding:0 1rem;line-height:1.5}
-          @media (prefers-color-scheme:dark){body{background:#121212;color:#ddd}a{color:#8ab4f8}}</style></head>
-          <body><h1>KMyBanners</h1>
-          <p>Your Ingress mission banners on a page of your own. <a href="https://github.com/elkuku/KMyBanners">Source</a>.</p>
-          <ul>
-          <li><a href="https://github.com/elkuku/KMyBanners/releases">Release app</a></li>
-          <li><a href="kmybanners-dev.apk" download>kmybanners-dev.apk</a> · $version · $size<br>
-          KMyBanners Dev: the latest changes on main, built on every push. It installs next to the release app.</li>
-          </ul></body></html>
-          EOF
-          echo "Dev APK $version ($size)" >> "$GITHUB_STEP_SUMMARY"
+          echo "DEV_APK_VERSION=$version" >> "$GITHUB_ENV"
+          echo "Dev APK $version" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: docs/package-lock.json
+
+      # downloads.data.ts reads the APK's size and DEV_APK_VERSION
+      - name: Build the docs
+        working-directory: docs
+        run: |
+          npm ci
+          npm run build
+          cp ../app/build/outputs/apk/dev/app-dev.apk .vitepress/dist/kmybanners-dev.apk
 
       - uses: actions/configure-pages@v6
 
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: site
+          path: docs/.vitepress/dist
 
   deploy:
     needs: build

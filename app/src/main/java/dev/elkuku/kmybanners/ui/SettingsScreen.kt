@@ -45,7 +45,7 @@ import dev.elkuku.kmybanners.BuildConfig
 import dev.elkuku.kmybanners.R
 
 /** The dev build (debug, or the published dev APK): marked DEV. */
-val isDev: Boolean get() = BuildConfig.DEV
+val isDev: Boolean get() = BuildConfig.DEV && !Demo.active
 
 /** The small "DEV" mark next to the app name in the dev build. */
 @Composable

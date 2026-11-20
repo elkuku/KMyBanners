@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="18 18 72 72"><!-- The app icon: a 3 x 3 grid of mission medals -->
+<circle cx="54" cy="54" r="36" fill="#0B100F"/>
+<circle cx="36" cy="36" r="7.5" fill="#3AD19A" stroke="#E3A53B" stroke-width="1.2"/>
+<circle cx="54" cy="36" r="7.5" fill="#5AA2FF" stroke="#E3A53B" stroke-width="1.2"/>
+<circle cx="72" cy="36" r="7.5" fill="#E3A53B" stroke="#E3A53B" stroke-width="1.2"/>
+<circle cx="36" cy="54" r="7.5" fill="#5AA2FF" stroke="#E3A53B" stroke-width="1.2"/>
+<circle cx="54" cy="54" r="7.5" fill="#E3A53B" stroke="#E3A53B" stroke-width="1.2"/>
+<circle cx="72" cy="54" r="7.5" fill="#3AD19A" stroke="#E3A53B" stroke-width="1.2"/>
+<circle cx="36" cy="72" r="7.5" fill="#E3A53B" stroke="#E3A53B" stroke-width="1.2"/>
+<circle cx="54" cy="72" r="7.5" fill="#3AD19A" stroke="#E3A53B" stroke-width="1.2"/>
+<circle cx="72" cy="72" r="7.5" fill="#5AA2FF" stroke="#E3A53B" stroke-width="1.2"/>
+</svg>

@@ -25,6 +25,7 @@ import dev.elkuku.kmybanners.bannergress.BannergressApi
 import dev.elkuku.kmybanners.bannergress.BannergressAuth
 import dev.elkuku.kmybanners.github.GitHubApi
 import dev.elkuku.kmybanners.github.GitHubAuth
+import dev.elkuku.kmybanners.ui.Demo
 import dev.elkuku.kmybanners.ui.MainScreen
 import dev.elkuku.kmybanners.ui.MainViewModel
 
@@ -50,8 +51,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         if (savedInstanceState == null) handle(intent)
+        // The debug build's fixed screens for the docs' screenshots
+        Demo.start(intent.getStringExtra("demo"))
         setContent {
-            val state by vm.state.collectAsStateWithLifecycle()
+            val real by vm.state.collectAsStateWithLifecycle()
+            val state = Demo.state ?: real
             var theme by remember { mutableStateOf(AppTheme.get(this)) }
             val dark = when (theme) {
                 AppTheme.SYSTEM -> isSystemInDarkTheme()

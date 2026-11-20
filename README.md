@@ -3,6 +3,9 @@
 The app that gives an Ingress agent a web page of their mission banners: their mission medals from
 Ingress, matched with [Bannergress](https://bannergress.com), with a map of where each banner starts.
 
+**Docs:** [elkuku.github.io/KMyBanners](https://elkuku.github.io/KMyBanners/) (English, German, Spanish;
+source in `docs/`, built with the dev APK by the dev-build workflow).
+
 1. **Sign in with GitHub** (device flow): the app creates `<you>/ingress-banners` from
    [KMyBanners-template](https://github.com/elkuku/KMyBanners-template) and turns on GitHub Pages.
 2. **Sign in to Bannergress** and upload your done list (`done.json`).

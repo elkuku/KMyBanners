@@ -1,0 +1,14 @@
+{
+  "name": "kmybanners-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview",
+    "screenshots:app": "python3 scripts/app-screenshots.py"
+  },
+  "devDependencies": {
+    "vitepress": "1.6.4"
+  }
+}

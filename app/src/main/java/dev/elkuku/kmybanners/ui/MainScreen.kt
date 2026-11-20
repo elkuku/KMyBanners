@@ -54,7 +54,7 @@ fun MainScreen(s: UiState, vm: MainViewModel, theme: AppTheme, onTheme: (AppThem
     Scaffold(topBar = {
         TopAppBar(title = {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(stringResource(R.string.app_name))
+                Text(if (Demo.active) "KMyBanners" else stringResource(R.string.app_name))
                 if (isDev) DevBadge()
             }
         }, actions = {
@@ -134,7 +134,8 @@ private fun Page(s: UiState, vm: MainViewModel) {
                     style = MaterialTheme.typography.titleMedium)
                 Text(stringResource(R.string.shots_range, s.shots.first().name, s.shots.last().name),
                     style = MaterialTheme.typography.bodySmall)
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                // Wraps when the buttons are too wide side by side (German)
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Button(onClick = vm::upload, enabled = !s.busy) { Text(stringResource(R.string.upload_build)) }
                     OutlinedButton(onClick = vm::clearShots) { Text(stringResource(R.string.discard)) }
                 }
