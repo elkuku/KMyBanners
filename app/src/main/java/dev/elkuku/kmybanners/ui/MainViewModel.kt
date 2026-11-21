@@ -23,11 +23,13 @@ import dev.elkuku.kmybanners.github.DeviceCode
 import dev.elkuku.kmybanners.github.GitHubApi
 import dev.elkuku.kmybanners.github.GitHubAuth
 import dev.elkuku.kmybanners.github.GitHubException
+import dev.elkuku.kmybanners.github.Pages
 import dev.elkuku.kmybanners.github.Repo
 import dev.elkuku.kmybanners.github.RepoFile
 import dev.elkuku.kmybanners.json
 import dev.elkuku.kmybanners.shotJpeg
 import io.ktor.http.HttpStatusCode
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -81,6 +83,7 @@ data class UiState(
     val bannergressLogin: BannergressLogin? = null, // the WebView sign-in while it is open
     val doneUploaded: Int? = null,               // banners in the done list (on the page, or just uploaded)
     val doneSyncedAt: String? = null,            // when the done list was uploaded (config.json)
+    val loadFailed: Boolean = false,             // GitHub couldn't be reached when loading (no connection)
     val listed: Boolean = true,                  // the page is listed in the directory (config.json "directory")
     val banners: List<PageBanner> = emptyList(),   // the page's medal row groups (banners.json)
     val reviewList: List<PageBanner> = emptyList(),// what the review screen goes through
@@ -120,18 +123,31 @@ class MainViewModel(
             _state.update { it.copy(loading = false, signedIn = false) }
             return@work
         }
-        val login = account.login ?: api.user().login.also { account.login = it }
-        // Set up when the repo exists, was made from the template and config.json has the agent name
-        // (else "Create my page" finishes it)
-        val found = findPage(login)
-        val config = found?.let { readConfig(login, it.name) } ?: JsonObject(emptyMap())
-        val agent = config["agent"]?.jsonPrimitive?.content.orEmpty()
-        val repo = found?.takeIf { agent.isNotBlank() }
-        val pages = repo?.let { api.pages(login, it.name) }
-        // The done list on the page: how many banners, uploaded when (for the front page)
-        val doneCount = repo?.let {
-            api.file(login, it.name, "done.json")?.decodeToString()
-                ?.let { runCatching { json.parseToJsonElement(it).jsonArray.size }.getOrNull() }
+        _state.update { it.copy(loading = true, loadFailed = false) }
+        // No connection (e.g. right after the phone wakes up): still signed in, so neither the sign-in nor
+        // "Create my page" but a card to try again
+        val login: String
+        val config: JsonObject
+        val repo: Repo?
+        val pages: Pages?
+        val doneCount: Int?
+        try {
+            login = account.login ?: api.user().login.also { account.login = it }
+            // Set up when the repo exists, was made from the template and config.json has the agent name
+            // (else "Create my page" finishes it)
+            val found = findPage(login)
+            config = found?.let { readConfig(login, it.name) } ?: JsonObject(emptyMap())
+            val agent = config["agent"]?.jsonPrimitive?.content.orEmpty()
+            repo = found?.takeIf { agent.isNotBlank() }
+            pages = repo?.let { api.pages(login, it.name) }
+            // The done list on the page: how many banners, uploaded when (for the front page)
+            doneCount = repo?.let {
+                api.file(login, it.name, "done.json")?.decodeToString()
+                    ?.let { runCatching { json.parseToJsonElement(it).jsonArray.size }.getOrNull() }
+            }
+        } catch (e: IOException) {
+            _state.update { it.copy(loading = false, loadFailed = true) }
+            return@work
         }
         _state.update {
             it.copy(loading = false, signedIn = true, login = login, repo = repo?.fullName, pageUrl = pages?.htmlUrl,

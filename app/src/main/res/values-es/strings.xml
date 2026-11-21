@@ -33,6 +33,8 @@
     <string name="build_failed">La creación falló (%1$s).</string>
     <string name="show_build">Ver en GitHub</string>
     <string name="try_again">Reintentar</string>
+    <string name="load_failed_title">No se puede conectar con GitHub</string>
+    <string name="load_failed_text">Revisa tu conexión a internet y vuelve a intentarlo. Sigues con la sesión iniciada.</string>
     <string name="howto_1">1. En Ingress, abre tu perfil de agente, desplázate hasta las medallas de misión y toca la flecha junto a ellas.</string>
     <string name="howto_2">2. Haz una captura, desplázate media pantalla, espera a que carguen las imágenes y haz la siguiente, hasta el final de la lista.</string>
     <string name="howto_2_update">2. Haz una captura, desplázate media pantalla, espera a que carguen las imágenes y haz la siguiente, hasta medallas que ya están en tu página y unas filas más.</string>

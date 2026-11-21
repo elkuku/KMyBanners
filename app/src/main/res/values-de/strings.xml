@@ -33,6 +33,8 @@
     <string name="build_failed">Das Erstellen ist fehlgeschlagen (%1$s).</string>
     <string name="show_build">Auf GitHub ansehen</string>
     <string name="try_again">Nochmal versuchen</string>
+    <string name="load_failed_title">GitHub ist nicht erreichbar</string>
+    <string name="load_failed_text">Prüf deine Internetverbindung und versuch es nochmal. Du bist weiterhin angemeldet.</string>
     <string name="howto_1">1. Öffne in Ingress dein Agentenprofil, scrolle zu den Missionsmedaillen und tippe auf den Pfeil daneben.</string>
     <string name="howto_2">2. Mach einen Screenshot, scrolle etwa eine halbe Bildschirmhöhe weiter, warte, bis die Bilder geladen sind, und mach den nächsten – bis ans Ende der Liste.</string>
     <string name="howto_2_update">2. Mach einen Screenshot, scrolle etwa eine halbe Bildschirmhöhe weiter, warte, bis die Bilder geladen sind, und mach den nächsten – bis zu Medaillen, die schon auf deiner Seite sind, und ein paar Reihen weiter.</string>

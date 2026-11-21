@@ -35,6 +35,8 @@
     <string name="build_failed">The build failed (%1$s).</string>
     <string name="show_build">Show the build on GitHub</string>
     <string name="try_again">Try again</string>
+    <string name="load_failed_title">Can\'t reach GitHub</string>
+    <string name="load_failed_text">Check your internet connection and try again. You are still signed in.</string>
     <string name="howto_1">1. In Ingress, open your agent profile, scroll to the mission medals and tap the arrow next to them.</string>
     <string name="howto_2">2. Take a screenshot, scroll about half a screen, wait until the pictures have loaded, take the next one — down to the end of the list.</string>
     <string name="howto_2_update">2. Take a screenshot, scroll about half a screen, wait until the pictures have loaded, take the next one — down to medals that are already on your page, and a few rows more.</string>

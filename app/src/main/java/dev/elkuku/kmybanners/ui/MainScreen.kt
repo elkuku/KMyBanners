@@ -73,6 +73,7 @@ fun MainScreen(s: UiState, vm: MainViewModel, theme: AppTheme, onTheme: (AppThem
             s.error?.let { ErrorCard(errorText(it), vm::dismissError) }
             when {
                 s.loading -> CircularProgressIndicator()
+                s.loadFailed -> LoadFailed(s, vm)
                 !s.signedIn -> SignIn(s, vm)
                 s.repo == null -> CreatePage(s, vm)
                 else -> Page(s, vm)
@@ -312,6 +313,18 @@ private fun CheckStep(s: UiState, vm: MainViewModel) {
                     Text(pluralStringResource(R.plurals.save_decisions, s.decisions.size, s.decisions.size))
                 }
             }
+        }
+    }
+}
+
+/** GitHub couldn't be reached when loading: still signed in, try again. */
+@Composable
+private fun LoadFailed(s: UiState, vm: MainViewModel) {
+    Card(Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(stringResource(R.string.load_failed_title), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.load_failed_text))
+            Button(onClick = vm::refresh, enabled = !s.busy) { Text(stringResource(R.string.try_again)) }
         }
     }
 }
