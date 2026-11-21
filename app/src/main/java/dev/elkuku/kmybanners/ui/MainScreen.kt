@@ -1,22 +1,22 @@
 package dev.elkuku.kmybanners.ui
 
+import android.content.ClipData
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Surface
-import androidx.compose.material3.CardDefaults
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -31,22 +32,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import dev.elkuku.kmybanners.AppTheme
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import dev.elkuku.kmybanners.PageRepo
-import dev.elkuku.kmybanners.R
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.elkuku.kmybanners.AppTheme
+import dev.elkuku.kmybanners.PageRepo
+import dev.elkuku.kmybanners.R
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,7 +84,8 @@ fun MainScreen(s: UiState, vm: MainViewModel, theme: AppTheme, onTheme: (AppThem
 @Composable
 private fun SignIn(s: UiState, vm: MainViewModel) {
     val uri = LocalUriHandler.current
-    val clipboard = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
+    val scope = rememberCoroutineScope()
     Text(stringResource(R.string.intro_title), style = MaterialTheme.typography.titleMedium)
     Text(stringResource(R.string.intro_text))
     val code = s.code
@@ -94,7 +98,7 @@ private fun SignIn(s: UiState, vm: MainViewModel) {
                 Text(code.userCode, fontFamily = FontFamily.Monospace, fontSize = 32.sp, fontWeight = FontWeight.Bold)
                 Text(stringResource(R.string.code_hint), style = MaterialTheme.typography.bodySmall)
                 Button(onClick = {
-                    clipboard.setText(AnnotatedString(code.userCode))
+                    scope.launch { clipboard.setClipEntry(ClipEntry(ClipData.newPlainText("GitHub code", code.userCode))) }
                     uri.openUri(code.verificationUri)
                 }) { Text(stringResource(R.string.copy_code)) }
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -246,7 +250,7 @@ private fun DoneStep(s: UiState, vm: MainViewModel) {
     val done = s.doneUploaded != null
     var info by rememberSaveable { mutableStateOf(false) }
     Step(1, stringResource(R.string.done_title), done,
-        if (done) listOfNotNull(pluralStringResource(R.plurals.banners_count, s.doneUploaded!!, number(s.doneUploaded)),
+        if (done) listOfNotNull(pluralStringResource(R.plurals.banners_count, s.doneUploaded, number(s.doneUploaded)),
             s.doneSyncedAt?.take(10)?.let { stringResource(R.string.done_on, it) }).joinToString(" · ")
         else stringResource(R.string.done_not_yet)) {
         if (done) {
