@@ -17,7 +17,7 @@ hero:
       link: /downloads
     - theme: alt
       text: See an example page
-      link: https://elkuku.github.io/ingress-banners/
+      link: https://elkuku.github.io/nikp3h-ingress-banners/
 
 features:
   - icon: 📸

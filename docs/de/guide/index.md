@@ -7,7 +7,7 @@ Screenshots deiner Missionsmedaillen und teilst sie mit der App; sie findet die 
 Es gibt keinen KMyBanners-Server: Die Seite liegt in einem Repository auf **deinem GitHub-Konto** und wird
 mit GitHub Pages veröffentlicht, unter `https://<dein GitHub-Name>.github.io/<Name des Repositorys>/`
 (`ingress-banners`, wenn du keinen anderen Namen wählst).
-[So sieht eine aus](https://elkuku.github.io/ingress-banners/).
+[So sieht eine aus](https://elkuku.github.io/nikp3h-ingress-banners/).
 
 ## Was du brauchst {#was-du-brauchst}
 

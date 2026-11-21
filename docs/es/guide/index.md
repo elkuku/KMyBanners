@@ -7,7 +7,7 @@ de tus medallas de misión en Ingress y las compartes con la app; ella encuentra
 No hay un servidor de KMyBanners: la página está en un repositorio de **tu cuenta de GitHub** y se publica
 con GitHub Pages, en `https://<tu nombre de GitHub>.github.io/<nombre del repositorio>/` (`ingress-banners`
 si no eliges otro nombre).
-[Aquí hay una](https://elkuku.github.io/ingress-banners/).
+[Aquí hay una](https://elkuku.github.io/nikp3h-ingress-banners/).
 
 ## Lo que necesitas {#lo-que-necesitas}
 

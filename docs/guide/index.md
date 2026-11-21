@@ -7,7 +7,7 @@ mission medals in Ingress and share them with the app; it finds the banners on
 There is no KMyBanners server: the page lives in a repository on **your GitHub account** and is published
 with GitHub Pages, at `https://<your GitHub name>.github.io/<repository name>/` (`ingress-banners` unless you
 choose another name).
-[Here is one](https://elkuku.github.io/ingress-banners/).
+[Here is one](https://elkuku.github.io/nikp3h-ingress-banners/).
 
 ## What you need
 
