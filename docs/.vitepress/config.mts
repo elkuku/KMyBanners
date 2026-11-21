@@ -5,6 +5,7 @@ function themeConfig(prefix: string, t: {
   guide: string
   developers: string
   downloads: string
+  pages: string
   gettingStarted: string
   medals: string
   check: string
@@ -16,6 +17,7 @@ function themeConfig(prefix: string, t: {
       { text: t.guide, link: `${prefix}/guide/`, activeMatch: `${prefix}/guide/` },
       { text: t.developers, link: `${prefix}/developers/`, activeMatch: `${prefix}/developers/` },
       { text: t.downloads, link: `${prefix}/downloads` },
+      { text: t.pages, link: 'https://elkuku.github.io/KMyBanners-directory/' },
     ],
 
     sidebar: {
@@ -63,6 +65,7 @@ export default defineConfig({
           guide: 'Guide',
           developers: 'Developers',
           downloads: 'Downloads',
+          pages: "Agents' pages",
           gettingStarted: 'Getting started',
           medals: 'Your medals and done list',
           check: 'Checking your medals',
@@ -81,6 +84,7 @@ export default defineConfig({
           guide: 'Anleitung',
           developers: 'Entwickler',
           downloads: 'Downloads',
+          pages: 'Seiten der Agenten',
           gettingStarted: 'Erste Schritte',
           medals: 'Medaillen und Erledigt-Liste',
           check: 'Medaillen prüfen',
@@ -119,6 +123,7 @@ export default defineConfig({
           guide: 'Guía',
           developers: 'Desarrolladores',
           downloads: 'Descargas',
+          pages: 'Páginas de agentes',
           gettingStarted: 'Primeros pasos',
           medals: 'Medallas y lista de completados',
           check: 'Revisar tus medallas',
