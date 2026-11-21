@@ -176,13 +176,16 @@ class MainViewModel(
             _state.update { it.copy(code = code) }
             val tokens = try {
                 auth.await(code)
-            } finally {
-                _state.update { it.copy(code = null) } // also when it fails: no code card left waiting
+            } catch (e: Throwable) {
+                _state.update { it.copy(code = null) } // no code card left waiting
+                throw e
             }
             if (tokens == null) {
-                _state.update { it.copy(error = UiError(R.string.error_code_expired)) }
+                _state.update { it.copy(code = null, error = UiError(R.string.error_code_expired)) }
                 return@work
             }
+            // The spinner until refresh() has the page, not the sign-in intro in between
+            _state.update { it.copy(code = null, loading = true) }
             account.save(tokens)
             refresh()
         }
