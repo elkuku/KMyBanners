@@ -9,7 +9,7 @@ mit GitHub Pages veröffentlicht, unter `https://<dein GitHub-Name>.github.io/<N
 (`ingress-banners`, wenn du keinen anderen Namen wählst).
 [So sieht eine aus](https://elkuku.github.io/nikp3h-ingress-banners/), und das
 [Verzeichnis der Agenten-Seiten](https://elkuku.github.io/KMyBanners-directory/) listet sie alle auf; deine
-erscheint dort innerhalb eines Tages.
+erscheint dort innerhalb eines Tages, außer du schaltest das in den [Einstellungen](#einstellungen) aus.
 
 ## Was du brauchst {#was-du-brauchst}
 
@@ -100,5 +100,9 @@ Adresse um und wird dort neu erstellt. GitHub leitet die alte Adresse einer Seit
 funktioniert nicht mehr, auch nicht in Links, die du geteilt hast. Die App findet die Seite am Topic
 `kmybanners`, das sie dem Repository gibt, auch auf einem anderen Handy oder nach einer Umbenennung auf
 der Website von GitHub.
+
+**Meine Seite im Verzeichnis zeigen** (am Anfang an) bestimmt, ob das
+[Verzeichnis der Agenten-Seiten](https://elkuku.github.io/KMyBanners-directory/) deine Seite zeigt. Das
+Verzeichnis wird einmal am Tag aktualisiert, eine Änderung zeigt sich dort also bis zum nächsten Tag.
 
 <img class="shot-phone" src="/screenshots/app/de/settings.webp" alt="Die Einstellungen">

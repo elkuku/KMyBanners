@@ -9,7 +9,7 @@ with GitHub Pages, at `https://<your GitHub name>.github.io/<repository name>/` 
 choose another name).
 [Here is one](https://elkuku.github.io/nikp3h-ingress-banners/), and the
 [directory of agents' pages](https://elkuku.github.io/KMyBanners-directory/) lists them all; yours appears there
-within a day.
+within a day, unless you turn that off in the [settings](#settings).
 
 ## What you need
 
@@ -95,5 +95,9 @@ dark, your GitHub account with **Sign out**, your page's repository, and the ver
 built again there. GitHub doesn't forward the old address of a page: it stops working, also in links you
 shared. The app finds the page by the topic `kmybanners` it gives the repository, also on another phone
 or after a rename on GitHub's website.
+
+**List my page in the directory** (on at first) decides whether the
+[directory of agents' pages](https://elkuku.github.io/KMyBanners-directory/) shows your page. The directory is
+updated once a day, so a change shows there by the next day.
 
 <img class="shot-phone" src="/screenshots/app/en/settings.webp" alt="The settings">

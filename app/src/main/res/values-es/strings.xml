@@ -140,4 +140,8 @@
     <string name="rename">Cambiar el nombre</string>
     <string name="rename_title">¿Cambiar el nombre del repositorio?</string>
     <string name="rename_text">Tu página se muda a %1$s. Su dirección anterior deja de funcionar, también en los enlaces que compartiste. La página se vuelve a crear con el nuevo nombre.</string>
+    <string name="directory">Directorio de páginas de agentes</string>
+    <string name="directory_list">Mostrar mi página en el directorio</string>
+    <string name="directory_text">El directorio reúne las páginas públicas hechas con KMyBanners y se actualiza una vez al día. Si lo desactivas, tu página sale de él con la próxima actualización.</string>
+    <string name="directory_open">Abrir el directorio</string>
 </resources>

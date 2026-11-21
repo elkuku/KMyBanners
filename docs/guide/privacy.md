@@ -15,6 +15,10 @@ Your page's repository (`ingress-banners` unless you chose another name) is **pu
 
 Your GitHub name is part of the page's address.
 
+Your page is also listed in the
+[directory of agents' pages](https://elkuku.github.io/KMyBanners-directory/), unless you turn off
+**List my page in the directory** in the app's settings.
+
 ## What stays on your phone
 
 The app keeps its sign-in to GitHub and to Bannergress in its own storage on your phone. **Sign out**

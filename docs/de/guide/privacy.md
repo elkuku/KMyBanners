@@ -15,6 +15,10 @@ Das Repository deiner Seite (`ingress-banners`, wenn du keinen anderen Namen gew
 
 Dein GitHub-Name ist Teil der Adresse der Seite.
 
+Deine Seite steht außerdem im
+[Verzeichnis der Agenten-Seiten](https://elkuku.github.io/KMyBanners-directory/), außer du schaltest
+**Meine Seite im Verzeichnis zeigen** in den Einstellungen der App aus.
+
 ## Was auf deinem Handy bleibt {#was-auf-deinem-handy-bleibt}
 
 Die App speichert ihre Anmeldung bei GitHub und bei Bannergress in ihrem eigenen Speicher auf deinem

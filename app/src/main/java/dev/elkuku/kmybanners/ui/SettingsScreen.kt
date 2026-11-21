@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -27,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -38,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
@@ -89,6 +93,7 @@ fun SettingsDialog(s: UiState, vm: MainViewModel, theme: AppTheme, onTheme: (App
                     }
                 }
                 s.repo?.let { repo -> RepoSection(repo.substringAfter('/'), s, vm, close) }
+                if (s.repo != null) DirectorySection(s, vm)
                 Section(stringResource(R.string.version)) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text("${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", style = MaterialTheme.typography.bodyLarge)
@@ -127,6 +132,28 @@ private fun RepoSection(current: String, s: UiState, vm: MainViewModel, close: (
         )
     }
 }
+
+/** Whether the page is listed in the directory of agents' pages (on by default). */
+@Composable
+private fun DirectorySection(s: UiState, vm: MainViewModel) {
+    val uri = LocalUriHandler.current
+    Section(stringResource(R.string.directory)) {
+        Row(
+            Modifier.fillMaxWidth().toggleable(value = s.listed, enabled = !s.busy, role = Role.Switch,
+                onValueChange = { vm.setListed(it) }),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(stringResource(R.string.directory_list), Modifier.weight(1f))
+            Switch(checked = s.listed, onCheckedChange = null, enabled = !s.busy)
+        }
+        Text(stringResource(R.string.directory_text), style = MaterialTheme.typography.bodySmall)
+        TextButton(onClick = { uri.openUri(DIRECTORY_URL) }, contentPadding = PaddingValues(0.dp)) {
+            Text(stringResource(R.string.directory_open))
+        }
+    }
+}
+
+const val DIRECTORY_URL = "https://elkuku.github.io/KMyBanners-directory/"
 
 /** The app's language, picked from a list: the phone's or one of [AppLanguage.SUPPORTED]; choosing one recreates the activity. */
 @OptIn(ExperimentalMaterial3Api::class)

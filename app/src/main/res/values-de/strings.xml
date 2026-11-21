@@ -132,4 +132,8 @@
     <string name="rename">Umbenennen</string>
     <string name="rename_title">Repository umbenennen?</string>
     <string name="rename_text">Deine Seite zieht nach %1$s um. Die alte Adresse funktioniert dann nicht mehr, auch nicht in Links, die du geteilt hast. Die Seite wird unter dem neuen Namen neu erstellt.</string>
+    <string name="directory">Verzeichnis der Agenten-Seiten</string>
+    <string name="directory_list">Meine Seite im Verzeichnis zeigen</string>
+    <string name="directory_text">Das Verzeichnis listet die öffentlichen Seiten, die mit KMyBanners gemacht wurden, und wird einmal am Tag aktualisiert. Wenn du das ausschaltest, verschwindet deine Seite mit der nächsten Aktualisierung daraus.</string>
+    <string name="directory_open">Verzeichnis öffnen</string>
 </resources>

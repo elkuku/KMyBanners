@@ -9,7 +9,7 @@ con GitHub Pages, en `https://<tu nombre de GitHub>.github.io/<nombre del reposi
 si no eliges otro nombre).
 [Aquí hay una](https://elkuku.github.io/nikp3h-ingress-banners/), y el
 [directorio de páginas de agentes](https://elkuku.github.io/KMyBanners-directory/) las reúne todas; la tuya
-aparece allí en un día.
+aparece allí en un día, salvo que lo desactives en los [ajustes](#ajustes).
 
 ## Lo que necesitas {#lo-que-necesitas}
 
@@ -98,5 +98,9 @@ claro u oscuro, tu cuenta de GitHub con **Cerrar sesión**, el repositorio de tu
 la nueva dirección y se vuelve a crear allí. GitHub no redirige la dirección anterior de una página: deja
 de funcionar, también en los enlaces que compartiste. La app encuentra la página por el topic `kmybanners`
 que le da al repositorio, también en otro teléfono o después de cambiar el nombre en la web de GitHub.
+
+**Mostrar mi página en el directorio** (activado al principio) decide si el
+[directorio de páginas de agentes](https://elkuku.github.io/KMyBanners-directory/) muestra tu página. El
+directorio se actualiza una vez al día, así que un cambio se ve allí al día siguiente.
 
 <img class="shot-phone" src="/screenshots/app/es/settings.webp" alt="Los ajustes">

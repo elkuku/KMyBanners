@@ -44,6 +44,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -80,6 +81,7 @@ data class UiState(
     val bannergressLogin: BannergressLogin? = null, // the WebView sign-in while it is open
     val doneUploaded: Int? = null,               // banners in the done list (on the page, or just uploaded)
     val doneSyncedAt: String? = null,            // when the done list was uploaded (config.json)
+    val listed: Boolean = true,                  // the page is listed in the directory (config.json "directory")
     val banners: List<PageBanner> = emptyList(),   // the page's medal row groups (banners.json)
     val reviewList: List<PageBanner> = emptyList(),// what the review screen goes through
     val reviewing: Int? = null,                    // the entry on the review screen (index into reviewList)
@@ -134,7 +136,8 @@ class MainViewModel(
         _state.update {
             it.copy(loading = false, signedIn = true, login = login, repo = repo?.fullName, pageUrl = pages?.htmlUrl,
                 bannergress = bgAuth.signedIn, doneUploaded = doneCount,
-                doneSyncedAt = config["doneSyncedAt"]?.jsonPrimitive?.content)
+                doneSyncedAt = config["doneSyncedAt"]?.jsonPrimitive?.content,
+                listed = config["directory"]?.jsonPrimitive?.booleanOrNull ?: true)
         }
         loadToCheck()
         checkBuild()
@@ -235,6 +238,20 @@ class MainViewModel(
         val before = api.dispatch(login, repo.name, WORKFLOW)
         _state.update { it.copy(build = Build("queued")) }
         follow(login) { api.latestDispatch(login, repo.name, WORKFLOW)?.takeIf { it.id != before } }
+    }
+
+    /**
+     * Lists the page in the directory of agents' pages, or not: "directory" in config.json, which the directory
+     * reads every day. [skip ci]: the page itself doesn't change, so no build.
+     */
+    fun setListed(listed: Boolean) = work {
+        val login = _state.value.login ?: return@work
+        val config = readConfig(login, name)
+        val newConfig = JsonObject(config + ("directory" to JsonPrimitive(listed)))
+        api.commit(login, name,
+            listOf(RepoFile("config.json", (prettyJson.encodeToString(JsonObject.serializer(), newConfig) + "\n").toByteArray())),
+            if (listed) "List the page in the directory [skip ci]" else "Leave the directory [skip ci]")
+        _state.update { it.copy(listed = listed) }
     }
 
     fun shared(shots: List<Shot>) = _state.update { it.copy(shots = shots, build = null, error = null) }

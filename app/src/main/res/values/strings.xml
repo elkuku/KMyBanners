@@ -134,4 +134,8 @@
     <string name="rename">Rename</string>
     <string name="rename_title">Rename the repository?</string>
     <string name="rename_text">Your page moves to %1$s. Its old address stops working, also in links you shared. The page is built again under the new name.</string>
+    <string name="directory">Directory of agents\' pages</string>
+    <string name="directory_list">List my page in the directory</string>
+    <string name="directory_text">The directory lists the public pages made with KMyBanners, updated once a day. When you turn this off, your page leaves it with the next update.</string>
+    <string name="directory_open">Open the directory</string>
 </resources>

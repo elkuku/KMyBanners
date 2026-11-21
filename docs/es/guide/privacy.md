@@ -14,6 +14,10 @@ El repositorio de tu página (`ingress-banners` si no elegiste otro nombre) es *
 
 Tu nombre de GitHub forma parte de la dirección de la página.
 
+Tu página también aparece en el
+[directorio de páginas de agentes](https://elkuku.github.io/KMyBanners-directory/), salvo que desactives
+**Mostrar mi página en el directorio** en los ajustes de la app.
+
 ## Qué se queda en tu teléfono {#que-se-queda-en-tu-telefono}
 
 La app guarda su sesión de GitHub y de Bannergress en su propio almacenamiento en tu teléfono. **Cerrar
