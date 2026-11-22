@@ -63,7 +63,13 @@ causas más comunes, en el registro en inglés:
 - tus medallas de misión como en Ingress, las más nuevas primero;
 - un mapa de dónde empieza cada banner, y los países;
 - cada banner con sus medallas, misiones, lugar y un enlace a Bannergress, con una búsqueda y filtros
-  (*Done*, *Done list only*, *To check*, *Single missions*). La página está en inglés.
+  (*Done*, *Done list only*, *Not on Bannergress*, *To check*, *Single missions*). La página está en inglés.
+
+**Buscar:** la búsqueda de arriba (un título, lugar, id de Bannergress o nota) y los filtros actúan en toda
+la página. La tabla muestra solo los banners encontrados y el mapa solo sus puntos de inicio; en tus
+medallas de misión los demás banners se oscurecen. **Only the banners found**, encima de las medallas
+mientras buscas o filtras, muestra solo sus medallas, una debajo de otra. Al hacer clic en uno, se ve en la
+tabla y en el mapa.
 
 <img class="shot-web" src="/screenshots/web/page.webp" alt="Una página de banners">
 

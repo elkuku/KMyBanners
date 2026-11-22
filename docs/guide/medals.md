@@ -62,7 +62,12 @@ again. The most common reasons, in the log:
 - your mission medals as in Ingress, newest first;
 - a map of where each banner starts, and the countries;
 - every banner with its medals, missions, place and a link to Bannergress, with a search and filters
-  (*Done*, *Done list only*, *To check*, *Single missions*).
+  (*Done*, *Done list only*, *Not on Bannergress*, *To check*, *Single missions*).
+
+**Searching:** the search at the top (a title, place, Bannergress id or note) and the filters work on the
+whole page. The table shows only the banners found and the map only their start points; in your mission
+medals the other banners are darkened. **Only the banners found**, above the medals while you search or
+filter, shows just their medals, one under the other. Click one to see it in the table and on the map.
 
 <img class="shot-web" src="/screenshots/web/page.webp" alt="A banner page">
 

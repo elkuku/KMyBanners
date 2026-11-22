@@ -63,7 +63,13 @@ startet es neu. Die häufigsten Gründe, im Protokoll auf Englisch:
 - deine Missionsmedaillen wie in Ingress, die neuesten zuerst;
 - eine Karte, wo jedes Banner beginnt, und die Länder;
 - jedes Banner mit Medaillen, Missionen, Ort und einem Link zu Bannergress, mit einer Suche und Filtern
-  (*Done*, *Done list only*, *To check*, *Single missions*). Die Seite selbst ist auf Englisch.
+  (*Done*, *Done list only*, *Not on Bannergress*, *To check*, *Single missions*). Die Seite selbst ist auf Englisch.
+
+**Suchen:** Die Suche oben (ein Titel, Ort, eine Bannergress-ID oder Notiz) und die Filter wirken auf die
+ganze Seite. Die Tabelle zeigt nur die gefundenen Banner und die Karte nur ihre Startpunkte; in deinen
+Missionsmedaillen sind die anderen Banner abgedunkelt. **Only the banners found** über den Medaillen zeigt,
+solange du suchst oder filterst, nur ihre Medaillen untereinander. Ein Klick auf eines zeigt es in der Tabelle
+und auf der Karte.
 
 <img class="shot-web" src="/screenshots/web/page.webp" alt="Eine Bannerseite">
 
